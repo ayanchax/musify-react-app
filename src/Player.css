@@ -38,3 +38,23 @@
 .skipBtn:hover {
     color: white!important;
 }
+
+.translucent {
+    pointer-events: none;
+    background-image: linear-gradient(to right, #8092b9, darkgrey);
+    opacity: 0.5;
+    cursor: wait;
+}
+
+.favorite-icon {
+    display: flex;
+    margin-top: 3px!important;
+    cursor: pointer!important;
+}
+
+.share-icon {
+    color: #fff!important;
+    margin-top: -2px!important;
+    cursor: pointer;
+    margin-left: 10px;
+}

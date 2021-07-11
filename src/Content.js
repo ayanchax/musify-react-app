@@ -9,11 +9,18 @@ import "react-h5-audio-player/lib/styles.css";
 import Loader from "react-loader-spinner";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import Search from './Search';
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import NativeSelect from '@material-ui/core/NativeSelect';
+import GraphicEqIcon from '@material-ui/icons/GraphicEq';
+import ShareIcon from '@material-ui/icons/Share';
 function Content() {
     const [songs, setSongs] = useState([]);
     const [currentSong, setCurrentSong] = useState({});
     const [playing, setPlaying] = useState(false);
     const [paused, setPaused] = useState(false);
+    const [favorite, setFavorite] = useState(false);
+    const [quality, setAudioQuality] = useState(0);
     const playerObject = useRef(null);
     const [index, setIndex] = useState(0);
 
@@ -84,6 +91,18 @@ function Content() {
         setPaused(false)
         onPlayedNext();
     }
+
+    function getBlob(currentSong) {
+        return currentSong?.blob?.replace("blob:", "");
+    }
+
+    function toggleFavorites(e) {
+        if (!favorite)
+            setFavorite(true)
+        else {
+            setFavorite(false)
+        }
+    }
     if (songs.length > 0) {
         return (
             <div className="content">
@@ -126,15 +145,17 @@ function Content() {
                 </div>
 
 
-                <div className="player">
+                <div className={`player ${!playing && !paused ? `translucent` : ``
+                    }`}>
 
                     <AudioPlayer
                         ref={playerObject}
                         hasDefaultKeyBindings={true}
                         autoPlayAfterSrcChange={true}
                         autoPlay={false}
-                        src={currentSong?.s3Path}
+                        src={getBlob(currentSong)}
                         volume={0.5}
+                        className={`${!playing && !paused ? `translucent` : ``}`}
                         showSkipControls={true}
                         onClickPrevious={(e) => onPlayedPrev()}
                         onClickNext={(e) => onPlayedNext()}
@@ -155,26 +176,53 @@ function Content() {
                         customAdditionalControls={[
                             RHAP_UI.LOOP,
 
+                            !favorite &&
+                            <FavoriteBorderIcon onClick={(e) => toggleFavorites(e)} className="favorite-icon off" />,
+                            favorite &&
+                            <FavoriteIcon onClick={(e) => toggleFavorites(e)} className="favorite-icon off" />,
+
+
 
                         ]}
                         header={<div className="content__currentSongInfo">
-                            <div className="content__currentSongTitle">{(playing) && (currentSong !== undefined || currentSong !== "undefined") ? (
+                            <div className="content__currentSongTitle">{(playing || paused) && (currentSong !== undefined || currentSong !== "undefined") ? (
                                 <div className="content__currentSongTitleElements">
                                     <img className="content__song__thumbnail" src="https://i1.sndcdn.com/avatars-pXAmgKVNbQvrXCST-MAaq0g-t200x200.jpg"
                                         alt="SongContentImage" />&nbsp;&nbsp;
-                                    <Loader className="content__currentSongTitle__audioLoader"
+                                    <Loader className=
+                                        {`content__currentSongTitle__audioLoader ${!playing && paused ? `hide` : ``
+                                            }`}
                                         type="Audio"
                                         color="#00BFFF"
                                         height={20}
                                         width={20}
 
-                                    /></div>) : ("")} &nbsp;&nbsp;
+                                    /></div>) : ("")}
+                                {!playing && paused ? "" : "  "}
 
                                 {truncate(currentSong?.metadata?.format?.tags.title, 100)}
+                                &nbsp;&nbsp;&nbsp;
+                                <GraphicEqIcon className="content__audio__quality__icon" />
+                                <div className="content__audio__quality">
+                                    <NativeSelect
+                                        value={quality}
+                                        onChange={(e) => setAudioQuality(e.target.value)}
+                                        inputProps={{
+                                            name: 'quality',
+                                            id: 'audio-quality-helper',
+                                        }}
+                                    >
+                                        <option selected value={0}>Auto</option>
+                                        <option value={1}>High</option>
+                                        <option value={2}>Medium</option>
+                                        <option value={3}>Low</option>
+                                    </NativeSelect>
+                                </div>
+                                <ShareIcon className="share-icon off" />
                             </div>
 
                             <div>
-                                {(playing) && (currentSong !== undefined || currentSong !== "undefined") ? (
+                                {(playing || paused) && (currentSong !== undefined || currentSong !== "undefined") ? (
                                     <span title={currentSong?.metadata?.format?.tags.artist + '-' + currentSong?.metadata?.format?.tags.album} className="song__artist dim-white">
                                         {truncate(currentSong?.metadata?.format?.tags.artist, 70)}
                                         {" "}<span className="song__delimiter">-</span>{" "}
@@ -183,6 +231,7 @@ function Content() {
                             </div>
                         </div>
                         }
+
 
                     />
                 </div>

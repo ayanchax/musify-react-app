@@ -137,3 +137,36 @@
     justify-content: space-between;
     padding: 5px;
 }
+
+.hide {
+    display: none!important;
+}
+
+.MuiNativeSelect-root {
+    margin-left: 7px!important;
+    color: #111!important;
+    font-size: 0.8rem!important;
+    padding: 5px !important;
+}
+
+.MuiNativeSelect-root>option {
+    color: #111!important;
+    font-size: 0.8rem!important;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif!important;
+}
+
+.content__audio__quality {
+    font-size: small!important;
+    margin-top: -10px!important;
+}
+
+#audio-quality-helper {
+    color: darkgrey!important;
+    font-size: small!important;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif!important;
+}
+
+.content__audio__quality__icon {
+    color: darkgrey!important;
+    margin-top: -2px!important;
+}
