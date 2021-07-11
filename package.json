@@ -13,6 +13,7 @@
         "react-h5-audio-player": "^3.7.1",
         "react-loader-spinner": "^4.0.0",
         "react-scripts": "4.0.3",
+        "react-share-social": "^0.1.48",
         "web-vitals": "^1.0.1"
     },
     "scripts": {

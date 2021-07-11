@@ -14,6 +14,9 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import NativeSelect from '@material-ui/core/NativeSelect';
 import GraphicEqIcon from '@material-ui/icons/GraphicEq';
 import ShareIcon from '@material-ui/icons/Share';
+
+import ShareDialog from "./ShareDialog";
+
 function Content() {
     const [songs, setSongs] = useState([]);
     const [currentSong, setCurrentSong] = useState({});
@@ -22,6 +25,7 @@ function Content() {
     const [favorite, setFavorite] = useState(false);
     const [quality, setAudioQuality] = useState(0);
     const playerObject = useRef(null);
+    const [showModal, updateShowModal] = useState(false);
     const [index, setIndex] = useState(0);
 
     useEffect(() => {
@@ -103,10 +107,15 @@ function Content() {
             setFavorite(false)
         }
     }
+    const toggleModal = () => updateShowModal(state => !state);
+
+
     if (songs.length > 0) {
         return (
             <div className="content">
+                <ShareDialog url="https://musify-7ba7c.web.app/" title="Share Musify!!" isOpen={showModal} updateModalState={toggleModal} />
                 <Search />
+
                 <div className="content__header">
                     <MusicNoteIcon className="content__headerIcon" />
                     <h2>Featured Playlist</h2>
@@ -193,7 +202,7 @@ function Content() {
                                         {`content__currentSongTitle__audioLoader ${!playing && paused ? `hide` : ``
                                             }`}
                                         type="Audio"
-                                        color="#00BFFF"
+                                        color="#ff5858"
                                         height={20}
                                         width={20}
 
@@ -218,7 +227,7 @@ function Content() {
                                         <option value={3}>Low</option>
                                     </NativeSelect>
                                 </div>
-                                <ShareIcon className="share-icon off" />
+                                <ShareIcon onClick={toggleModal} className="share-icon off" />
                             </div>
 
                             <div>

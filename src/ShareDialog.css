@@ -1,0 +1,20 @@
+.makeStyles-copyContainer-5 {
+    display: none !important;
+}
+
+.share__logo {
+    width: 140px;
+    object-fit: contain;
+    justify-content: center;
+    display: flex;
+    text-align: center;
+    width: 50%
+}
+
+.dialog__title {
+    padding: 10px;
+    top: 5px;
+    font-size: 1rem;
+    display: flex;
+    justify-content: space-between;
+}
