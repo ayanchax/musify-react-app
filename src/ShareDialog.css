@@ -14,8 +14,19 @@
 .dialog__title {
     top: 5px;
     font-size: 1rem;
+}
+
+.dialog__share__title {
+    color: #fff;
+    text-align: center;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    margin: 0 25px;
+}
+
+.dialog__headerTitle {
+    padding-top: 10px !important;
+    font-size: 2rem!important;
 }
 
 .Demo__some-network {
@@ -52,6 +63,12 @@
 .dialog__share__container {
     display: flex!important;
     padding: 5px;
+    justify-content: center;
+    text-align: center;
+}
+
+.dialog__share__container__inner {
+    display: flex!important;
 }
 
 .MuiDialog-paperScrollPaper {
@@ -62,4 +79,18 @@
 .dialog__button {
     color: white !important;
     font-weight: normal!important;
+}
+
+.dialog__song__thumbnail {
+    right: 20px;
+    width: 30px;
+    object-fit: contain;
+    justify-content: flex-start;
+    margin-top: -7px;
+    border-radius: 50%;
+}
+
+.dialog__titleText {
+    vertical-align: middle;
+    margin-top: -3px !important;
 }

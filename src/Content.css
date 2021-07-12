@@ -58,14 +58,18 @@
     background-image: linear-gradient(to right, #cc2e5d, #ff5858);
 }
 
+.selected {
+    color: #fff;
+    background-image: linear-gradient(to right, #040404, #262626);
+}
+
 .content__headerIcon {
     font-size: 2rem;
     ;
 }
 
 .content__icon {
-    font-size: 2rem;
-    ;
+    font-size: 2rem!important;
 }
 
 .song__artist,
@@ -175,17 +179,53 @@
     margin-top: -2px!important;
 }
 
-.content__duration {
+.content__duration,
+.content__shareIcon,
+.content__favoriteIcon,
+.content__moreOptionsIcon {
     color: darkgrey!important;
     font-weight: normal!important;
-    float: right;
+    font-size: small!important;
+}
+
+.content__FavoritesIcon {
+    color: darkgrey!important;
+    font-weight: normal!important;
+    margin-top: -5px !important;
+    font-size: small!important;
 }
 
 .content__duration__icon {
     vertical-align: middle
 }
 
+.content__actions {
+    display: flex;
+    float: right!important;
+    font-size: small!important;
+    margin-top: -20px!important;
+}
+
 a {
     text-decoration: none;
     color: #fff;
+}
+
+.content__song__title__1 {
+    margin-left: 4px!important;
+    padding: 2px!important;
+    vertical-align: middle!important;
+}
+
+.content__song__title__0 {
+    display: flex!important;
+    margin-left: 3px!important;
+}
+
+.content__song__metadata {}
+
+.content__song__metadata__icon {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: darkgrey;
 }

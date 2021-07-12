@@ -1,6 +1,5 @@
 import React from 'react'
 import "./SongCredit.css";
-import MusicNoteIcon from "@material-ui/icons/MusicNote";
 const SongCredit = ({ songData }) => {
 
     if (songData !== undefined) {

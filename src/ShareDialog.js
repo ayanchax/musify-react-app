@@ -12,6 +12,7 @@ import {
     FacebookShareButton, FacebookIcon, TwitterShareButton, TwitterIcon, LinkedinIcon, LinkedinShareButton,
     WhatsappShareButton, WhatsappIcon, FacebookMessengerIcon, FacebookMessengerShareButton
 } from "react-share";
+import Footer from './Footer';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -22,6 +23,8 @@ const ShareDialog = ({ url, networks, title, contentTitle, isOpen, updateModalSt
             <div>
 
                 <Dialog
+                    fullWidth={true}
+                    maxWidth="sm"
                     open={isOpen}
                     TransitionComponent={Transition}
                     keepMounted
@@ -29,9 +32,20 @@ const ShareDialog = ({ url, networks, title, contentTitle, isOpen, updateModalSt
                     aria-labelledby="alert-dialog-slide-title"
                     aria-describedby="alert-dialog-slide-description"
                 >
-                    <DialogTitle id="alert-dialog-slide-title"><div className="dialog__title"><ShareIcon /><span >{title}</span></div></DialogTitle>
+                    <DialogTitle id="alert-dialog-slide-title"><div className="dialog__title"><ShareIcon /><span className="dialog__headerTitle" >{title}</span></div></DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-slide-description">
+
+                            <div className="dialog__share__title">
+                                <img
+                                    className="dialog__song__thumbnail"
+                                    src="https://i1.sndcdn.com/avatars-pXAmgKVNbQvrXCST-MAaq0g-t200x200.jpg"
+                                    alt="SongContentImage"
+                                />&nbsp;&nbsp;
+                                <span className="dialog__titleText">{contentTitle}</span>
+
+                            </div>
+
                             <div className="dialog__share__container">
                                 {networks.map((network) => (
 
@@ -96,8 +110,9 @@ const ShareDialog = ({ url, networks, title, contentTitle, isOpen, updateModalSt
                         </Button>
 
                     </DialogActions>
+                    <Footer />
                 </Dialog>
-            </div>
+            </div >
         )
 
     }

@@ -15,6 +15,7 @@
 
 .genericdialog__headerTitle {
     padding-top: 10px !important;
+    font-size: 2rem!important;
 }
 
 .genericdialog__some-network__share-button {

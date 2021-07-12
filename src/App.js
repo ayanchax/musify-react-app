@@ -3,11 +3,8 @@ import './App.css';
 import React from "react";
 import Header from './Header';
 import Content from './Content';
+import HeaderActions from './HeaderActions';
 
-import LibraryMusicIcon from '@material-ui/icons/LibraryMusic'
-import AddIcon from '@material-ui/icons/Add';
-import HeaderOption from "./HeaderOption";
-import FavoriteIcon from '@material-ui/icons/Favorite';
 import { useDataLayerContextValue } from "./DataLayer";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 function App() {
@@ -17,17 +14,10 @@ function App() {
     <div className="app">
       <Header />
       {featuredPlaylist.length > 0 &&
-
-        <div className="header__actions">
-          <HeaderOption title="Your Library" Icon={LibraryMusicIcon} />
-          <HeaderOption title="Create Playlist" Icon={AddIcon} />
-          <HeaderOption title="Liked Songs" Icon={FavoriteIcon} />
-        </div>
+        <HeaderActions />
       }
       <div className="app_body">
-
         <Router>
-
           <Switch>
             <Route path='/songs/:songid'> <Content /></Route>
             <Route path='/'><Content /></Route>

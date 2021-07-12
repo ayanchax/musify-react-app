@@ -3,7 +3,7 @@
     justify-content: space-between;
     position: fixed;
     bottom: 0;
-    height: 130px;
+    height: 140px;
     width: 100%;
     padding-bottom: 10px;
     color: white;
@@ -11,7 +11,7 @@
 
 .rhap_container {
     border: none!important;
-    height: 150px!important;
+    height: 155px!important;
     background-image: linear-gradient(to right, #8092b9, black);
     color: white !important;
 }
@@ -57,4 +57,13 @@
     margin-top: -2px!important;
     cursor: pointer;
     margin-left: 10px;
+}
+
+.player__flex {
+    display: flex!important;
+}
+
+.player__current__song__metadata {
+    margin-top: 5px !important;
+    margin-left: 4px!important;
 }
