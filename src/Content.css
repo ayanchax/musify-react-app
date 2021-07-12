@@ -23,15 +23,19 @@
     background-image: linear-gradient(to right, #262626, #3b3b8a);
 }
 
+.content__playlist__song:hover {
+    background-image: linear-gradient(to right, #040404, #262626);
+}
+
 .content__playlist {
     scroll-behavior: smooth;
     overflow: scroll;
-    max-height: 500px;
+    max-height: 450px;
 }
 
 .center {
     margin: auto;
-    width: 80%;
+    width: 95%;
     padding: 10px;
 }
 
@@ -169,4 +173,19 @@
 .content__audio__quality__icon {
     color: darkgrey!important;
     margin-top: -2px!important;
+}
+
+.content__duration {
+    color: darkgrey!important;
+    font-weight: normal!important;
+    float: right;
+}
+
+.content__duration__icon {
+    vertical-align: middle
+}
+
+a {
+    text-decoration: none;
+    color: #fff;
 }

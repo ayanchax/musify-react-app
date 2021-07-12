@@ -14,8 +14,19 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import NativeSelect from '@material-ui/core/NativeSelect';
 import GraphicEqIcon from '@material-ui/icons/GraphicEq';
 import ShareIcon from '@material-ui/icons/Share';
-
+import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import ShareDialog from "./ShareDialog";
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import { useDataLayerContextValue } from "./DataLayer";
+import { actionTypes } from "./reducer";
+import Popover from '@material-ui/core/Popover';
+import PlayerMoreOptions from "./PlayerMoreOptions";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { Link } from "react-router-dom";
+
+toast.configure()
+
 
 function Content() {
     const [songs, setSongs] = useState([]);
@@ -26,17 +37,43 @@ function Content() {
     const [quality, setAudioQuality] = useState(0);
     const playerObject = useRef(null);
     const [showModal, updateShowModal] = useState(false);
+    const [currentSongURI, setCurrentSongURI] = useState("");
     const [index, setIndex] = useState(0);
-
+    const [{ featuredPlaylist }, dispatch] = useDataLayerContextValue();
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+    const linkObject = React.createRef();
+    const id = open ? 'simple-popover' : undefined;
     useEffect(() => {
         async function fetchData() {
             const request = await axios.get(requests.fetchSongs)
             setSongs(request.data);
-            setCurrentSong(songs[0]);
+            setCurrentSong(request.data[0]);
+            setCurrentSongURI(window.location.href)
+            request.data.forEach((__song) => {
+                if (window.location.href.substring(window.location.href.lastIndexOf("/") + 1) === __song?._id) {
+                    play(__song)
+                    return;
+                }
+
+            });
+            dispatch({
+                type: actionTypes.SET_FEATURED_PLAYLISTS,
+                featuredPlaylist: request.data
+            })
+
+            dispatch({
+                type: actionTypes.SET_CURRENT_SONG,
+                currentSongPlaying: request.data[0]
+            })
+
+
             return request;
         }
         fetchData();
     }, []);
+
+
 
     const truncate = (str, n) => {
         return str?.length > n ? str.substr(0, n - 1) + "..." : str;
@@ -44,6 +81,11 @@ function Content() {
 
     function play(_song) {
         setCurrentSong(_song);
+        setCurrentSongURI(window.location.href)
+        dispatch({
+            type: actionTypes.SET_CURRENT_SONG,
+            currentSongPlaying: currentSong
+        })
         if (_song._id === currentSong?._id && paused) {
             playerObject.current.audio.current.play();
             setCurrentSong(_song);
@@ -52,20 +94,40 @@ function Content() {
     function onPlayerPaused() {
         setPlaying(false);
         setPaused(true)
+        setCurrentSongURI(window.location.href)
+        dispatch({
+            type: actionTypes.SET_CURRENT_SONG,
+            currentSongPlaying: currentSong
+        })
         document.title = "Musify | " + currentSong?.metadata?.format?.tags.title
     }
     function pause() {
         setPlaying(false);
         setPaused(true)
+        setCurrentSongURI(window.location.href)
         playerObject.current.audio.current.pause();
+        dispatch({
+            type: actionTypes.SET_CURRENT_SONG,
+            currentSongPlaying: currentSong
+        })
         document.title = "Musify";
     }
     function onPlayed() {
         setPlaying(true); setPaused(false)
+        setCurrentSongURI(window.location.href)
+        dispatch({
+            type: actionTypes.SET_CURRENT_SONG,
+            currentSongPlaying: currentSong
+        })
         document.title = "Musify | " + currentSong?.metadata?.format?.tags.title
     }
     function onPlayedError() {
         setPlaying(false); setPaused(false)
+        setCurrentSongURI(null)
+        dispatch({
+            type: actionTypes.SET_CURRENT_SONG,
+            currentSongPlaying: null
+        })
         document.title = "Musify";
     }
     function onPlayedPrev() {
@@ -75,7 +137,12 @@ function Content() {
             setIndex(songs.length - 1);
         }
         setPlaying(true)
+        setCurrentSongURI(window.location.href)
         setCurrentSong(songs[index])
+        dispatch({
+            type: actionTypes.SET_CURRENT_SONG,
+            currentSongPlaying: songs[index]
+        })
         document.title = "Musify | " + currentSong?.metadata?.format?.tags.title
     }
     function onPlayedNext() {
@@ -85,13 +152,19 @@ function Content() {
             setIndex(0);
         }
         setPlaying(true)
+        setCurrentSongURI(window.location.href)
         setCurrentSong(songs[index])
+        dispatch({
+            type: actionTypes.SET_CURRENT_SONG,
+            currentSongPlaying: songs[index]
+        })
         document.title = "Musify | " + currentSong?.metadata?.format?.tags.title
 
     }
     function onEnded() {
         document.title = "Musify";
         setPlaying(false)
+        setCurrentSongURI(null);
         setPaused(false)
         onPlayedNext();
     }
@@ -101,20 +174,45 @@ function Content() {
     }
 
     function toggleFavorites(e) {
-        if (!favorite)
+        if (!favorite) {
             setFavorite(true)
+            toast.success('Song has been added to your likes', { position: toast.POSITION.BOTTOM_CENTER, autoClose: 3000 })
+        }
+
         else {
             setFavorite(false)
+            toast.error('Song has been removed from your likes', { position: toast.POSITION.BOTTOM_CENTER, autoClose: 3000 })
         }
+    }
+    function getDuration(value) {
+        const sec = parseInt(value, 10); // convert value to number if it's string
+        let hours = Math.floor(sec / 3600); // get hours
+        let minutes = Math.floor((sec - (hours * 3600)) / 60); // get minutes
+        let seconds = sec - (hours * 3600) - (minutes * 60); //  get seconds
+        // add 0 if value < 10; Example: 2 => 02
+        if (hours < 10) { hours = "0" + hours; }
+        // if (minutes < 10) { minutes = "0" + minutes; }
+        if (seconds < 10) { seconds = "0" + seconds; }
+        return minutes + ':' + seconds; // Return is  MM : SS
     }
     const toggleModal = () => updateShowModal(state => !state);
 
+    const openMoreOptionsPopOver = (event,) => {
+        setAnchorEl(event.currentTarget);
+    }
 
+    const closeMoreOptionsPopOver = () => {
+        setAnchorEl(null);
+
+    };
     if (songs.length > 0) {
         return (
             <div className="content">
-                <ShareDialog url="https://musify-7ba7c.web.app/" title="Share Musify!!" isOpen={showModal} updateModalState={toggleModal} />
+
+                <ShareDialog url={currentSongURI} networks={['facebook', 'messenger', 'whatsapp', 'linkedin', 'twitter']}
+                    title="Share Musify!!" contentTitle={truncate(currentSong?.metadata?.format?.tags.title, 100)} isOpen={showModal} updateModalState={toggleModal} />
                 <Search />
+
 
                 <div className="content__header">
                     <MusicNoteIcon className="content__headerIcon" />
@@ -123,17 +221,18 @@ function Content() {
 
                 <div className="content__playlist center">
                     {songs.map((song) => (
-                        <div
-                            key={song?._id}
+                        <Link ref={linkObject} to={`/songs/${song?._id}`}
+                            key={song?._id} id={song?._id}
                             onClick={() =>
-                                song?._id === currentSong?._id && playing ? pause() : play(song)
+                                song?._id === currentSong?._id && window.location.href === currentSongURI && playing ? pause() : play(song)
                             }
-                            className={`content__playlist__song ${song._id === currentSong?._id && playing ? `active` : ``
+                            className={`content__playlist__song ${song._id === currentSong?._id && window.location.href === currentSongURI && playing ? `active` : ``
                                 }`}
                         >
+
                             <p>
 
-                                {song._id === currentSong?._id && (playing) ? (<Loader className="content__playlist__audioLoader"
+                                {song._id === currentSong?._id && window.location.href === currentSongURI && (playing) ? (<Loader className="content__playlist__audioLoader"
                                     type="Audio"
                                     color="#ffff"
                                     height={20}
@@ -141,6 +240,7 @@ function Content() {
 
                                 />) : (<MusicNoteIcon className="content__icon" />)} {" "}
                                 {truncate(song.metadata.format.tags.title, 200)}
+                                <span className="content__duration"><AccessTimeIcon className="content__duration__icon" />{getDuration(song.metadata.format.duration)}</span>
                             </p>
                             <span className="song__artist">
                                 {truncate(song.metadata.format.tags.artist, 150)}
@@ -149,7 +249,8 @@ function Content() {
                             <span className="song__album">
                                 {truncate(song.metadata.format.tags.album, 30)}
                             </span>
-                        </div>
+                        </Link>
+
                     ))}
                 </div>
 
@@ -228,6 +329,26 @@ function Content() {
                                     </NativeSelect>
                                 </div>
                                 <ShareIcon onClick={toggleModal} className="share-icon off" />
+                                <MoreHorizIcon onClick={openMoreOptionsPopOver} className="share-icon off" />
+                                <Popover
+                                    id={id}
+                                    open={open}
+                                    anchorEl={anchorEl}
+                                    onClose={closeMoreOptionsPopOver}
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'right',
+                                    }}
+                                    transformOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'right',
+                                    }}
+                                >
+
+                                    <PlayerMoreOptions onClosed={closeMoreOptionsPopOver} />
+
+
+                                </Popover>
                             </div>
 
                             <div>

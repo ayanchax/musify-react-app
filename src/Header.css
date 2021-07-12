@@ -20,6 +20,7 @@
     left: 0px;
     width: 140px;
     object-fit: contain;
+    cursor: pointer
 }
 
 .header__avatar {
@@ -28,4 +29,24 @@
     width: 30px;
     object-fit: contain;
     margin-top: 8px;
+}
+
+.header__title {
+    margin-left: 10px;
+    padding: 5px;
+    font-size: 12px;
+}
+
+.header>hr {
+    border: 1px solid #282828;
+    width: 90%;
+    margin: 10px auto;
+}
+
+.header__actions {
+    display: flex;
+    justify-content: space-evenly;
+    text-align: center;
+    font-size: small!important;
+    margin-top: -5px!important
 }

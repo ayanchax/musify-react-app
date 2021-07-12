@@ -8,24 +8,15 @@ import Slide from '@material-ui/core/Slide';
 import Button from '@material-ui/core/Button';
 import ShareIcon from '@material-ui/icons/Share';
 import "./ShareDialog.css";
-
-
-import { ShareSocial } from 'react-share-social'
-
-const style = {
-    background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-    borderRadius: 3,
-    border: 0,
-    color: 'white',
-    padding: '0 30px',
-    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-};
-
+import {
+    FacebookShareButton, FacebookIcon, TwitterShareButton, TwitterIcon, LinkedinIcon, LinkedinShareButton,
+    WhatsappShareButton, WhatsappIcon, FacebookMessengerIcon, FacebookMessengerShareButton
+} from "react-share";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
-const ShareDialog = ({ url, title, isOpen, updateModalState }) => {
+const ShareDialog = ({ url, networks, title, contentTitle, isOpen, updateModalState }) => {
     if (isOpen) {
         return (
             <div>
@@ -41,17 +32,66 @@ const ShareDialog = ({ url, title, isOpen, updateModalState }) => {
                     <DialogTitle id="alert-dialog-slide-title"><div className="dialog__title"><ShareIcon /><span >{title}</span></div></DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-slide-description">
-                            <ShareSocial
-                                style={style}
-                                title={document.title}
-                                url={url}
-                                socialTypes={['facebook', 'twitter', 'reddit', 'linkedin', 'whatsapp']}
-                                onSocialButtonClicked={data => updateModalState}
-                            />
+                            <div className="dialog__share__container">
+                                {networks.map((network) => (
+
+                                    <div key={network}>
+                                        {network === "facebook" && <FacebookShareButton
+                                            url={url}
+                                            quote={contentTitle}
+                                            hashtag="#musify"
+                                            className="dialog__some-network__share-button"
+                                        >
+                                            <FacebookIcon size={32} round />
+                                        </FacebookShareButton>
+                                        }
+                                        {network === "messenger" && <FacebookMessengerShareButton
+                                            url={url}
+                                            hashtag="#musify"
+                                            quote={contentTitle}
+                                            className="dialog__some-network__share-button"
+                                        >
+                                            <FacebookMessengerIcon size={32} round />
+                                        </FacebookMessengerShareButton>
+                                        }
+
+                                        {network === "whatsapp" && <WhatsappShareButton
+                                            url={url}
+                                            hashtag="#musify"
+                                            quote={contentTitle}
+                                            className="dialog__some-network__share-button"
+                                        >
+                                            <WhatsappIcon size={32} round />
+                                        </WhatsappShareButton>
+                                        }
+                                        {network === "twitter" && <TwitterShareButton
+                                            url={url}
+                                            hashtag="#musify"
+                                            quote={contentTitle}
+                                            className="dialog__some-network__share-button"
+                                        >
+                                            <TwitterIcon size={32} round />
+                                        </TwitterShareButton>
+                                        }
+
+                                        {network === "linkedin" && <LinkedinShareButton
+                                            url={url}
+                                            hashtag="#musify"
+                                            quote={contentTitle}
+                                            className="dialog__some-network__share-button"
+                                        >
+                                            <LinkedinIcon size={32} round />
+                                        </LinkedinShareButton>
+                                        }
+
+                                    </div>
+                                ))}
+                            </div>
+
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={updateModalState} color="primary">
+                        <Button className="dialog__button" onClick={updateModalState} color="primary">
                             Close
                         </Button>
 

@@ -5,6 +5,7 @@ form>button {
 .search {
     color: #fff;
     justify-content: center;
+    margin-top: -5px !important;
 }
 
 .search__form {
