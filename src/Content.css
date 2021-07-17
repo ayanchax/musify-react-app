@@ -30,7 +30,7 @@
 .content__playlist {
     scroll-behavior: smooth;
     overflow: scroll;
-    max-height: 450px;
+    max-height: 400px;
 }
 
 .center {
@@ -60,7 +60,7 @@
 
 .selected {
     color: #fff;
-    background-image: linear-gradient(to right, #040404, #262626);
+    background-image: linear-gradient(to right, #5A6782, #262626);
 }
 
 .content__headerIcon {

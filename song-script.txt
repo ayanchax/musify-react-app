@@ -1,0 +1,304 @@
+import requests
+import endpoints
+import helper
+import json
+from traceback import print_exc
+
+def search_for_song(query,lyrics,songdata):
+    if query.startswith('http') and 'saavn.com' in query:
+        id = get_song_id(query)
+        return get_song(id, lyrics)
+
+    search_base_url = endpoints.search_base_url+query
+    response = requests.get(search_base_url).text.encode().decode('unicode-escape')
+    response = json.loads(response)
+    song_response = response['songs']['data']
+    if not songdata:
+        return song_response
+    songs = []
+    for song in song_response:
+        id = song['id']
+        song_data = get_song(id, lyrics)
+        if song_data:
+            songs.append(song_data)
+    return songs
+
+def get_song(id,lyrics):
+    try:
+        song_details_base_url = endpoints.song_details_base_url+id
+        song_response = requests.get(song_details_base_url).text.encode().decode('unicode-escape')
+        song_response = json.loads(song_response)
+        song_data = helper.format_song(song_response[id],lyrics)
+        if song_data:
+            return song_data
+    except:
+        return None
+
+def get_song_id(url):
+    res = requests.get(url, data=[('bitrate', '320')])
+    try:
+        return res.text.split('"song":{"type":"')[1].split('","image":')[0].split('"id":"')[-1]
+    except IndexError:
+        return(res.text.split('"pid":"'))[1].split('","')[0]
+
+
+def get_lyrics(id):
+    url = endpoints.lyrics_base_url+id
+    lyrics_json = requests.get(url).text
+    lyrics_text = json.loads(lyrics_json)
+    return lyrics_text['lyrics']
+
+import base64
+import jiosaavn
+from pyDes import *
+
+def format_song(data,lyrics):
+    try:
+        url = data['media_preview_url']
+        url = url.replace("preview", "aac")
+        if data['320kbps']=="true":
+            url = url.replace("_96_p.mp4", "_320.mp4")
+        else:
+            url = url.replace("_96_p.mp4", "_160.mp4")
+        data['media_url'] = url
+    except KeyError or TypeError:
+        data['media_url'] = decrypt_url(data['encrypted_media_url'])
+        if data['320kbps']!="true":
+            data['media_url'] = data['media_url'].replace("_320.mp4","_160.mp4")
+
+    data['song'] = format(data['song'])
+    data['music'] = format(data['music'])
+    data['singers'] = format(data['singers'])
+    data['starring'] = format(data['starring'])
+    data['album'] = format(data['album'])
+    data["primary_artists"] = format(data["primary_artists"])
+    data['image'] = data['image'].replace("150x150","500x500")
+
+    if lyrics:
+        if data['has_lyrics']=='true':
+            data['lyrics'] = jiosaavn.get_lyrics(data['id'])
+        else:
+            data['lyrics'] = None
+
+    try:
+        data['copyright_text'] = data['copyright_text'].replace("&copy;","©")
+    except KeyError:
+        pass
+    return data
+
+def format_album(data,lyrics):
+    data['image'] = data['image'].replace("150x150","500x500")
+    data['name'] = format(data['name'])
+    data['primary_artists'] = format(data['primary_artists'])
+    data['title'] = format(data['title'])
+    for song in data['songs']:
+        song = format_song(song,lyrics)
+    return data
+
+def format_playlist(data,lyrics):
+    data['firstname'] = format(data['firstname'])
+    data['listname'] = format(data['listname'])
+    for song in data['songs']:
+        song = format_song(song,lyrics)
+    return data
+
+def format(string):
+    return string.encode().decode('unicode-escape').replace("&quot;","'").replace("&amp;", "&").replace("&#039;", "'")
+
+def decrypt_url(url):
+    des_cipher = des(b"38346591", ECB, b"\0\0\0\0\0\0\0\0",pad=None, padmode=PAD_PKCS5)
+    enc_url = base64.b64decode(url.strip())
+    dec_url = des_cipher.decrypt(enc_url, padmode=PAD_PKCS5).decode('utf-8')
+    dec_url = dec_url.replace("_96.mp4", "_320.mp4")
+    return dec_url
+
+    &n=${RESULT_LIMIT}&p=1
+
+    const RESULT_LIMIT: number = 10;
+
+// Search by query
+export const getSongSearchUrl = (song_name: string): string => {
+  return `https://www.jiosaavn.com/api.php?__call=search.getResults&_format=json&n=${RESULT_LIMIT}&p=1&_marker=0&ctx=android&q=${song_name}`;
+};
+
+export const getAlbumSearchUrl = (album_name: string): string => {
+  return `https://www.jiosaavn.com/api.php?__call=search.getAlbumResults&_format=json&n=${RESULT_LIMIT}&p=1&_marker=0&ctx=android&q=${album_name}`;
+};
+
+// Details
+export const getSongDetailsUrl = (song_id: string): string => {
+  return `https://www.jiosaavn.com/api.php?__call=song.getDetails&cc=in&_marker=0%3F_marker%3D0&_format=json&pids=${song_id}`;
+};
+
+export const getAlbumDetailsUrl = (album_id: string): string => {
+  return `https://www.jiosaavn.com/api.php?__call=content.getAlbumDetails&_format=json&cc=in&_marker=0%3F_marker=0&albumid=${album_id}`;
+};
+
+// Details by Perma-Token
+export const getSongDetailsByTokenUrl = (token: string): string => {
+  return `https://www.jiosaavn.com/api.php?__call=webapi.get&token=${token}&type=song&includeMetaTags=0&ctx=web6dot0&_format=json&_marker=0
+  `;
+};
+
+export const getAlbumDetailsByTokenUrl = (token: string): string => {
+  return `https://www.jiosaavn.com/api.php?__call=webapi.get&token=${token}&type=album&includeMetaTags=0&ctx=web6dot0&_format=json&_marker=0
+  `;
+};
+
+// Lyrics
+export const getLyricsUrl = (song_id: string): string => {
+  return `https://www.jiosaavn.com/api.php?__call=lyrics.getLyrics&ctx=web6dot0&_format=json&_marker=0%3F_marker=0&lyrics_id=${song_id}`;
+};
+© 2021 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Docs
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
+
+
+HINDI:
+Popular in 2021
+Bollywood Retro
+Dance Dance
+90s Bollywood  more like this  
+   90s Sad songs
+   90s Heartbreaks
+Romantic/Love Hits
+Evergreen Hits
+disco hits
+Party Hits 
+fusion
+
+Mood Music:
+Coke Studio Hits
+Workout music 
+Meditation music
+
+ENGLISH:
+1. Rock : 
+	Classic
+	Alternative
+	Hard
+	Soft
+	Rock Ballad
+	Heavy Metal
+	Grunge
+	Post-Grunge
+	Post-Punk
+	Punk
+	Funk
+	Country
+	Rock n Roll 
+	Psychadelic
+	Progressive
+	Pop
+	Blues
+	Folk
+2. Pop
+3. Electronic Dance Music (EDM), Dubstep, Techno
+4. Rythm and Blues(RnB), Hip Hop, Rap
+5. Country
+6. Blues
+7. Folk
+8. Jazz
+9. Indie, Indie Rock, Indie Pop
+10. Rock n Roll
+11. Soul
+12. Gospel
+13. Reggae
+14. House
+15. Trance
+16. Ambient
+17. Instrumental
+18. K-Pop
+
+
+
+REGIONAL(INDIAN)
+Bengali Assamese Odia Kannada
+
+Browse by Artists(indian)
+Manna de 
+Kishore Kumar
+Mohd Rafi 
+Mukesh
+Lata Mangeshkar
+Asha Bhosle
+Bappi Lahiri
+Talat Aziz
+Kumar Sanu
+Alka Yagnik
+Sadhana Sargam
+Vinod Rathod
+Sonu Nigam
+Nusrat Fateh Ali Khan
+Shreya Ghoshal
+Sunidhi Chauhan
+AR Rahman
+Arijit Singh
+KK
+Amit Trivedi
+Benny Dayal 
+Zubeen Garg
+Jubin Nautiyal
+Papon
+Neha Kakkar
+Honey Singh 
+Baadshah
+Raftaar
+
+
+Browse by Artists(foreign) 
+11.Bryan Adams
+12.Phil Collins
+13.Jeff Buckley
+14.George Michael
+15.Elton John
+16. Eminem
+1.Celine Dion
+2.Adele
+3.Vanessa Williams
+4.Sarah McLachlan
+5.Christina Perri
+6.Lana Del Rey
+7.Sia
+
+Browse by bands(foreign)
+1.Pink Floyd (band)
+2.Radiohead (band)
+3.Guns n Roses (band)
+4.Scorpions (band)
+5.Coldplay (band)
+6.The Beatles (band)
+7.The Police (band)
+8.Backstreet Boys (band)
+9.Westlife (band)
+10.Michael Learns to Rock(band)
+
+
+
+
+
+
+
+   	
+
+
+
+
+
+
+
+
+	
+
+
+
+

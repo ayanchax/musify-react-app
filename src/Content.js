@@ -23,7 +23,8 @@ import Popover from "@material-ui/core/Popover";
 import PlayerMoreOptions from "./PlayerMoreOptions";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Link, useParams, useHistory } from "react-router-dom";
+//useParams,
+import { Link, useHistory } from "react-router-dom";
 import PlayCircleFilledRoundedIcon from '@material-ui/icons/PlayCircleFilledRounded';
 import SupervisorAccountRoundedIcon from '@material-ui/icons/SupervisorAccountRounded';
 import PauseCircleFilledRoundedIcon from '@material-ui/icons/PauseCircleFilledRounded';
@@ -47,47 +48,30 @@ function Content() {
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const linkObject = React.createRef();
-    const songID = useParams(); //fetch the song id from the url params of react-router-dom
-    const [seed, setSeed] = useState("");
+    // const songID = useParams(); //fetch the song id from the url params of react-router-dom
     const history = useHistory();
 
     const id = open ? "simple-popover" : undefined;
     useEffect(() => {
-        if (
-            songID?.songid === undefined ||
-            songID?.songid === null ||
-            songID?.songid === "undefined"
-        ) {
-            setSeed(Math.floor(Math.random() * 5000));
-        } else {
-            setSeed(songID?.songid);
-        }
         async function fetchData() {
             const request = await axios.get(requests.fetchSongs);
             setSongs(request.data);
-            // setCurrentSong(request.data[0]);
             setCurrentSongURI(window.location.href);
+            dispatch({
+                type: actionTypes.SET_FEATURED_PLAYLISTS,
+                featuredPlaylist: request.data,
+            });
             request.data.forEach((__song) => {
                 if (
                     window.location.href.substring(
                         window.location.href.lastIndexOf("/") + 1
                     ) === __song?._id
                 ) {
-
-                    play(__song);
-                    return;
+                    setPlaying(true)
+                    play(__song, null);
+                    return
                 }
             });
-            dispatch({
-                type: actionTypes.SET_FEATURED_PLAYLISTS,
-                featuredPlaylist: request.data,
-            });
-
-            // dispatch({
-            //     type: actionTypes.SET_CURRENT_SONG,
-            //     currentSongPlaying: request.data[0]
-            // })
-
             return request;
         }
 
@@ -100,7 +84,6 @@ function Content() {
 
     function play(_song, event) {
         setCurrentSong(_song);
-
         setCurrentSongURI(window.location.href);
         dispatch({
             type: actionTypes.SET_CURRENT_SONG,
@@ -229,7 +212,7 @@ function Content() {
     }
     const toggleModal = (event, isOpenedFromPlaylist, playListSong) => {
         if (isOpenedFromPlaylist && playListSong !== null) {
-            dispatch({
+            dispatch_v2({
                 type: actionTypes.SET_SELECTED_SONG_NEEDLE,
                 selectedSongNeedle: playListSong,
             });
@@ -246,7 +229,7 @@ function Content() {
     function OnSongNeedleSelected(event, playListSong) {
 
         if (playListSong != null) {
-            dispatch({
+            dispatch_v2({
                 type: actionTypes.SET_SELECTED_SONG_NEEDLE,
                 selectedSongNeedle: playListSong,
             });
@@ -257,7 +240,7 @@ function Content() {
 
     const openMoreOptionsPopOver = (event, isOpenedFromPlaylist, playListSong) => {
         if (isOpenedFromPlaylist && playListSong !== null) {
-            dispatch({
+            dispatch_v2({
                 type: actionTypes.SET_SELECTED_SONG_NEEDLE,
                 selectedSongNeedle: playListSong,
             });
@@ -480,7 +463,7 @@ function Content() {
                                                 id: "audio-quality-helper",
                                             }}
                                         >
-                                            <option selected value={0}>
+                                            <option defaultValue value={0}>
                                                 Auto
                                             </option>
                                             <option value={1}>High</option>
