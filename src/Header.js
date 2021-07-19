@@ -7,6 +7,7 @@ import { actionTypes } from "./reducer";
 import { auth } from "./firebase";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 toast.configure();
 function Header() {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -33,6 +34,7 @@ function Header() {
                 position: toast.POSITION.BOTTOM_CENTER,
                 autoClose: 3000,
             });
+            document.title = "Musify"
         }).catch(function (error) {
             toast.error("Some error occured during sign out", {
                 position: toast.POSITION.BOTTOM_CENTER,
@@ -74,9 +76,12 @@ function Header() {
                     horizontal: "right",
                 }}
             >
+
                 <li onClick={e => signOutUser(e)} className="header__userAccountOptions" role="presentation">
                     Sign out
                 </li>
+
+
             </Popover>
         </header>
     );

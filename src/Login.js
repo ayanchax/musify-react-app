@@ -6,6 +6,8 @@ import { actionTypes } from "./reducer";
 import logo from "./assets/logo/logo.png";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Loader from "react-loader-spinner";
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 toast.configure();
 function Login() {
     const [{ }, dispatch] = useDataLayerContextValue();
@@ -34,24 +36,32 @@ function Login() {
     };
     return (
         <div className="login">
+
             <div className="login__container">
-                <div className=" justify-center flex">
+                <div className=" justify-center text-center flex  ">
+                    <Loader
+                        className="content__audio_loader"
+                        type="Audio"
+                        color="#00BFFF"
+                        height={40}
+                        width={40}
+                    />
+                </div>
+
+                <div className=" justify-center flex ">
                     <img className="lg:mb-10 md:mb-5 mb-0 object-contain"
                         src={logo}
                         alt=""
                     />
                 </div>
 
-                <div className=" justify-center flex space-x-4">
-                    <img onClick={signIn} className="lg:mb-10 md:mb-5 -mb-4 w-48 object-contain cursor-pointer justify-center text-center place-content-center"
+                <div className=" justify-center flex">
+                    <img onClick={signIn} className="lg:mb-10 md:mb-5 
+                    -mb-20 w-40 lg:w-48 object-contain cursor-pointer justify-center text-center  place-content-center"
                         src="/images/buttons/g-sign.png"
                         alt=""
                     />
-
-
                 </div>
-
-
             </div>
         </div>
     )

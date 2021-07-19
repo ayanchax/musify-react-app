@@ -3,19 +3,16 @@
     justify-content: space-between;
     position: fixed;
     bottom: 0;
-    /* height: 80px; */
-    flex: 0 0 140px;
-    /*or just height:50px;*/
+    /* height: 50px; */
     width: 100%;
     margin-top: auto;
-    /* padding-bottom: 20px; */
     color: white;
 }
 
 .rhap_container {
     border: none!important;
-    height: 140px!important;
-    background-image: linear-gradient(to right, #262626, #3b3b8a);
+    background-image: linear-gradient(to right, #262626, #121212);
+    /* height: 50px; */
     /* linear-gradient(to right, #8092b9, black); */
     color: white !important;
 }

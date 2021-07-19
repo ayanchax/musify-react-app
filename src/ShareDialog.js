@@ -8,6 +8,7 @@ import Slide from "@material-ui/core/Slide";
 import Button from "@material-ui/core/Button";
 import ShareIcon from "@material-ui/icons/Share";
 import "./ShareDialog.css";
+import parse from "html-react-parser"
 import {
     FacebookShareButton,
     FacebookIcon,
@@ -66,11 +67,11 @@ const ShareDialog = ({
                                     />
                                 </div>
                                 <div className="px-2 py-2 font-semibold font-sans">
-                                    {contentTitle}
+                                    {parse(contentTitle)}
                                 </div>
                                 <div className="text-gray-400 text-sm font-sans">
                                     {content?.primary_artists ? content?.primary_artists : "NA"} |{" "}
-                                    {content?.album} | {content?.year}
+                                    {parse(content?.album)} | {content?.year}
                                 </div>
                             </div>
 

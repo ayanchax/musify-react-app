@@ -17,6 +17,7 @@ import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import "./PlaylistContent.css"
 import Popover from "@material-ui/core/Popover";
 import { Link } from "react-router-dom";
+import parse from "html-react-parser"
 
 import PauseCircleFilledRoundedIcon from '@material-ui/icons/PauseCircleFilledRounded';
 import PlayerMoreOptions from "./PlayerMoreOptions";
@@ -123,7 +124,7 @@ function PlaylistContent({ setSearchSuggestionWindowOpened, isIndian, fetchUrl, 
     }
     return playlistSongs && (<div className="content" onClick={(e) => setSearchSuggestionWindowOpened(false)}>
         <ShareDialog
-            url={window.location.href + "/songs/" + selectedSongNeedle?.id + "/" + selectedSongNeedle?.song}
+            url={"https://musify-7ba7c.web.app/song/" + selectedSongNeedle?.id + "/" + selectedSongNeedle?.song}
             networks={[
                 "facebook",
                 "messenger",
@@ -141,41 +142,43 @@ function PlaylistContent({ setSearchSuggestionWindowOpened, isIndian, fetchUrl, 
 
             updateModalState={toggleModal}
         />
-        <div className="flex justify-center">
+        <div className="flex  justify-center text-center ">
             <div className="flex-column">
-                <Link to="/" className="flex-start cursor-pointer"><KeyboardBackspaceIcon /></Link>
+                {playlistSongs?.listname && (<Link to="/" className="flex-start cursor-pointer"><KeyboardBackspaceIcon /></Link>)}
                 <div title={playlistSongs?.listname} className="lg:text-3xl text-xl md:text-2xl font-semibold font-serif
-                 text-gray-200 px-2 py-2 text-center antialiased sm:subpixel-antialiased md:antialiased flex">
+                 text-gray-200 px-2 py-2 antialiased sm:subpixel-antialiased md:antialiased flex  ">
 
-                    <MusicNoteIcon className="content__headerIcon" />
-                    <h1 > {truncate(playlistSongs?.listname, 40)}</h1>
+                    {playlistSongs?.listname && (<MusicNoteIcon className="content__headerIcon" />)}
+                    <h1 title={playlistSongs?.listname} >{truncate(playlistSongs?.listname, 17)}</h1>
                 </div>
 
-                <div title={playlistSongs?.listname} className="lg:text-3xl text-xl md:text-2xl font-semibold font-serif text-gray-200 px-2 py-1">
-                    <img className=" object-contain lg:w-64 w-52" src={playlistSongs?.image} alt={playlistSongs?.listname} />
+                <div title={playlistSongs?.listname} className="lg:text-3xl justify-center text-xl md:text-2xl font-semibold font-serif text-gray-200 px-1 py-1">
+                    <img className=" object-contain lg:w-64 w-52 justify-center text-center" src={playlistSongs?.image} alt={playlistSongs?.listname} />
                 </div>
-                <div className="flex flex-grow space-x-2 antialiased sm:subpixel-antialiased md:antialiased ">
-                    <ShareIcon className=" transition duration-200 ease-in text-gray-500 cursor-pointer text-xs lg:text-md md:text-md hover:text-gray-100" />
-                    <FavoriteBorderIcon className="transition duration-200 ease-in text-gray-500 cursor-pointer text-xs lg:text-md md:text-md hover:text-gray-100" />
-                    <MoreHorizIcon className="transition duration-200 ease-in text-gray-500 cursor-pointer text-xs lg:text-md md:text-md hover:text-gray-100" />
-
-                </div>
-                <div className="flex flex-grow space-x-2  mt-2">
-
-
-                    <button class="bg-blue-500 hover:bg-red-700 hover:shadow-md text-white  font-semibold focus:outline-none 
-                    mr-1 mb-1 ease-linear transition-all duration-150 py-2 px-4 rounded shadow text-md lg:text-lg font-sans">
-                        <PlayCircleFilledRoundedIcon className="content__icon" /> Play All
-                    </button>
-                    <div title="Total Duration" className=" align-middle mt-3">
-                        <AccessTimeIcon className="text-xs lg:text-xs md:text-xs transition duration-200 ease-in
-                                 text-gray-400 cursor-pointer " />
-                        <span className=" transition duration-200 ease-in text-gray-400 cursor-pointer text-xs lg:text-md md:text-md">
-                            {formatted_duration(playlistSongs?.totalDurationOfSongs)}
-                        </span>
-
+                {playlistSongs?.listname && (
+                    <div className="flex flex-grow space-x-2 antialiased sm:subpixel-antialiased md:antialiased ">
+                        <ShareIcon className=" transition duration-200 ease-in text-gray-500 cursor-pointer text-xs lg:text-md md:text-md hover:text-gray-100" />
+                        <FavoriteBorderIcon className="transition duration-200 ease-in text-gray-500 cursor-pointer text-xs lg:text-md md:text-md hover:text-gray-100" />
+                        <MoreHorizIcon className="transition duration-200 ease-in text-gray-500 cursor-pointer text-xs lg:text-md md:text-md hover:text-gray-100" />
+                        <span className="transition duration-200 ease-in font-semibold text-gray-500 cursor-pointer text-md lg:text-md md:text-md hover:text-gray-100 antialiased sm:subpixel-antialiased md:antialiased">{playlistSongs?.songs?.length} songs</span>
                     </div>
-                </div>
+                )}
+                {playlistSongs?.listname && (
+                    <div className="flex flex-grow space-x-2  mt-2">
+                        <button class="bg-blue-500 hover:bg-red-700 hover:shadow-md text-white  font-semibold focus:outline-none 
+                    mr-1 mb-1 ease-linear transition-all duration-150 py-2 px-4 rounded shadow text-md lg:text-lg font-sans">
+                            <PlayCircleFilledRoundedIcon className="content__icon" /> Play All
+                        </button>
+                        <div title="Total Duration" className=" align-middle mt-3">
+                            <AccessTimeIcon className="text-xs lg:text-xs md:text-xs transition duration-200 ease-in
+                                 text-gray-400 cursor-pointer " />
+                            <span className=" transition duration-200 ease-in text-gray-400 cursor-pointer text-xs lg:text-md md:text-md">
+                                {formatted_duration(playlistSongs?.totalDurationOfSongs)}
+
+                            </span>
+
+                        </div>
+                    </div>)}
 
             </div>
         </div>
@@ -183,7 +186,7 @@ function PlaylistContent({ setSearchSuggestionWindowOpened, isIndian, fetchUrl, 
         <div className="flex justify center">
             <div className="content__playlist center">
                 {playlistSongs?.songs?.map((song) => (
-                    <div title={song?.song} key={song?.id} className="justify-center">
+                    <div title={parse(song?.song)} key={song?.id} className="justify-center">
 
                         <div onClick={(e) => OnSongNeedleSelected(e, song)}
                             className={` flex flex-row px-2 py-1  content__playlist__song ${song.id === currentSong?.id &&
@@ -216,9 +219,9 @@ function PlaylistContent({ setSearchSuggestionWindowOpened, isIndian, fetchUrl, 
 
                                 )}
 
-                                <div className="mt-1">{truncate(song?.song, 30)}</div>
+                                <div className="mt-1">{truncate(parse(song?.song), 30)}</div>
                             </div>
-                            <div title={song?.primary_artists ? song?.primary_artists : "NA"} className="text-gray-500">{truncate(song?.primary_artists ? song?.primary_artists : "NA", 70)} | {song?.year}
+                            <div title={song?.primary_artists ? song?.primary_artists : "NA"} className="text-gray-500">{truncate(song?.primary_artists ? song?.primary_artists : "NA", 25)} | {song?.year}
                             </div>
                             <div className="float-right -mt-4">
                                 <AccessTimeIcon className="text-xs lg:text-xs md:text-xs transition duration-200 ease-in

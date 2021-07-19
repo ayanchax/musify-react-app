@@ -1,9 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import GenericDialog from "./GenericDialog";
 import "./PlayerMoreOptions.css";
 import { useDataLayerContextValue } from "./DataLayer";
 import MusicNoteIcon from "@material-ui/icons/MusicNote";
 import SongCredit from "./SongCredit";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+toast.configure();
 function PlayerMoreOptions({ openedFromPlaylist, onClosed }) {
     const [{ currentSongPlaying }, dispatch] = useDataLayerContextValue();
     const [{ selectedSongNeedle }, dispatch_v2] = useDataLayerContextValue();
@@ -12,6 +17,7 @@ function PlayerMoreOptions({ openedFromPlaylist, onClosed }) {
     const [footer, setFooter] = useState("");
     const [bodyComponent, setBodyComponent] = useState("");
     const [bodyText, setBodyText] = useState("");
+    const [copiedSongLink, setCopiedSongLink] = useState(false);
     const [dialogIcon, setDialogIcon] = useState("");
     const toggleGenericModal = (icon, h, b, bt, f, isComingFromDataNode) => {
         if (isComingFromDataNode) {
@@ -23,6 +29,23 @@ function PlayerMoreOptions({ openedFromPlaylist, onClosed }) {
         }
         updateGenericModal((state) => !state);
     };
+
+    useEffect(() => {
+        if (copiedSongLink) {
+            toast.success("Song link copied!!", {
+                position: toast.POSITION.BOTTOM_CENTER,
+                autoClose: 3000,
+            });
+
+            setCopiedSongLink(false)
+        }
+
+
+    }, [copiedSongLink]);
+
+    const copyLink = (e) => {
+
+    }
     return (
         <div className="playermoreoptions">
             <GenericDialog
@@ -74,8 +97,12 @@ function PlayerMoreOptions({ openedFromPlaylist, onClosed }) {
             </li>
             <hr className="player__horizontalBar" />
             <li className="player__moreOptionsList" role="presentation">
-                Copy Song Link
+                <CopyToClipboard text={openedFromPlaylist ? "https://musify-7ba7c.web.app/song/" + selectedSongNeedle?.id + "/" + selectedSongNeedle?.song : "https://musify-7ba7c.web.app/song/" + currentSongPlaying?.id + "/" + currentSongPlaying?.song}
+                    onCopy={() => setCopiedSongLink(true)}>
+                    <span>Copy Song Link</span>
+                </CopyToClipboard>
             </li>
+
             <hr className="player__horizontalBar" />
             <li className="player__moreOptionsList" role="presentation">
                 Show Lyrics

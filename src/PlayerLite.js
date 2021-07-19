@@ -1,30 +1,33 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from "react";
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 import AudioPlayer, { RHAP_UI } from "react-h5-audio-player";
 import "react-h5-audio-player/lib/styles.css";
 import "./Player.css";
+import PlayCircleFilledRoundedIcon from '@material-ui/icons/PlayCircleFilledRounded';
 import Loader from "react-loader-spinner";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import { useDataLayerContextValue } from "./DataLayer";
 import { actionTypes } from "./reducer";
-import { truncate } from "./utility"
+import { truncate } from "./utility";
 import GraphicEqIcon from "@material-ui/icons/GraphicEq";
 import ShareIcon from "@material-ui/icons/Share";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import NativeSelect from "@material-ui/core/NativeSelect";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
-import PlayerMoreOptions from './PlayerMoreOptions';
+import PlayerMoreOptions from "./PlayerMoreOptions";
 import Popover from "@material-ui/core/Popover";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ShareDialog from './ShareDialog';
-import Switch from '@material-ui/core/Switch';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import ShareDialog from "./ShareDialog";
+import Switch from "@material-ui/core/Switch";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import parse from "html-react-parser";
 toast.configure();
 function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
     const playerObject = useRef(null);
     const [{ }, dispatch] = useDataLayerContextValue();
-    const [{ currentSongPlaying }, currentSongDispatcher] = useDataLayerContextValue();
+    const [{ currentSongPlaying }, currentSongDispatcher] =
+        useDataLayerContextValue();
     const [{ pause, play }, opDispatcher] = useDataLayerContextValue();
     const [favorite, setFavorite] = useState(false);
     const [quality, setAudioQuality] = useState(0);
@@ -35,7 +38,8 @@ function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
     const open = Boolean(anchorEl);
     const id = open ? "simple-popover" : undefined;
     useEffect(() => {
-        if (isMediaPaused) { //pause requested
+        if (isMediaPaused) {
+            //pause requested
             playerObject.current.audio.current.pause();
             opDispatcher({
                 type: actionTypes.SET_PLAYING,
@@ -45,8 +49,7 @@ function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
                 type: actionTypes.SET_PAUSED,
                 pause: true,
             });
-        }
-        else if (media?.id === currentSongPlaying?.id) {
+        } else if (media?.id === currentSongPlaying?.id) {
             playerObject.current.audio.current.play();
             opDispatcher({
                 type: actionTypes.SET_PLAYING,
@@ -61,7 +64,6 @@ function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
             type: actionTypes.SET_CURRENT_SONG,
             currentSongPlaying: media,
         });
-
     }, [isMediaPaused]);
 
     useEffect(() => {
@@ -80,7 +82,7 @@ function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
     }, []);
 
     const onPlay = (e) => {
-        console.log("Playing")
+        console.log("Playing");
         dispatch({
             type: actionTypes.SET_CURRENT_SONG,
             currentSongPlaying: media,
@@ -94,9 +96,9 @@ function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
             pause: false,
         });
         document.title = "Musify | " + media?.song;
-    }
+    };
     const pauseMedia = (e) => {
-        console.log("Paused")
+        console.log("Paused");
         dispatch({
             type: actionTypes.SET_CURRENT_SONG,
             currentSongPlaying: media,
@@ -110,9 +112,9 @@ function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
             pause: true,
         });
         document.title = "Musify | " + media?.song;
-    }
+    };
     const onPlayError = (e) => {
-        console.log("Play error")
+        console.log("Play error");
         document.title = "Musify";
         opDispatcher({
             type: actionTypes.SET_PLAYING,
@@ -122,12 +124,11 @@ function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
             type: actionTypes.SET_PAUSED,
             pause: true,
         });
-    }
+    };
     const toggleModal = (event) => {
         updateShowModal((state) => !state);
-    }
+    };
     const openMoreOptionsPopOver = (event) => {
-
         setAnchorEl(event.currentTarget);
     };
     const closeMoreOptionsPopOver = () => {
@@ -150,33 +151,44 @@ function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
     }
 
     const toggleAutoPlay = (e) => {
-        setAutoPlayAfterSrcChange((state) => !state);
-    }
+        if (autoPlayAfterSrcChange)
+            setAutoPlayAfterSrcChange(false)
+        else setAutoPlayAfterSrcChange(true)
+        if (!autoPlayAfterSrcChange) {
+            toast.success("Auto play turned on!!", {
+                position: toast.POSITION.BOTTOM_CENTER,
+                autoClose: 3000,
+            });
+        }
+        else {
+
+            toast.dark("Auto play turned off!!", {
+                position: toast.POSITION.BOTTOM_CENTER,
+                autoClose: 3000,
+            });
+        }
+    };
 
     return (
         <div className="player__lite">
             <ShareDialog
-                url={window.location.href + "/songs/" + currentSongPlaying?.id + "/" + currentSongPlaying?.song}
-                networks={[
-                    "facebook",
-                    "messenger",
-                    "whatsapp",
-                    "linkedin",
-                    "twitter",
-                ]}
+                url={
+                    "https://musify-7ba7c.web.app/song/" +
+                    currentSongPlaying?.id +
+                    "/" +
+                    currentSongPlaying?.song
+                }
+                networks={["facebook", "messenger", "whatsapp", "linkedin", "twitter"]}
                 title="Share Musify!!"
                 songThumbnail={currentSongPlaying?.image}
-                contentTitle={truncate(
-                    currentSongPlaying?.song,
-                    100
-                )}
+                contentTitle={truncate(currentSongPlaying?.song, 100)}
                 content={currentSongPlaying}
                 isOpen={showModal}
                 updateModalState={toggleModal}
             />
             <footer
                 onClick={(e) => setSearchSuggestionWindowOpened(false)}
-                className={`player ${!play && !pause ? `translucent` : ``}`}
+                className={`player  ${!play && !pause ? `translucent` : ``}`}
             >
                 <AudioPlayer
                     ref={playerObject}
@@ -185,7 +197,7 @@ function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
                     autoPlay={false}
                     src={media?.media_url}
                     volume={0.5}
-                    className=""
+
                     showSkipControls={true}
                     onClickPrevious={(e) => console.log()}
                     onClickNext={(e) => console.log()}
@@ -203,135 +215,153 @@ function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
                     onSuspend={(e) => console.log("Suspended")}
                     onWaiting={(e) => console.log("Waiting")}
                     onVolumeChange={(e) => console.log("Volume Changed")}
-                    customAdditionalControls={[
-                        RHAP_UI.LOOP,
-                        !favorite && (
-                            <FavoriteBorderIcon
-                                onClick={(e) => toggleFavorites(e)}
-                                className="favorite-icon off"
-                            />
-                        ),
-                        favorite && (
-                            <FavoriteIcon
-                                onClick={(e) => toggleFavorites(e)}
-                                className="favorite-icon off"
-                            />
-                        ),
 
+                    customAdditionalControls={[
+                        RHAP_UI.LOOP
                     ]}
                     header={
-                        <div className="content__currentSongInfo">
-                            <div className="content__currentSongTitle">
-                                {(play || pause) &&
-                                    (currentSongPlaying !== undefined || currentSongPlaying !== "undefined") ? (
-                                    <div className="content__currentSongTitleElements">
+                        <div>
+                            {(play || pause) &&
+                                (currentSongPlaying !== undefined ||
+                                    currentSongPlaying !== "undefined") && (
+                                    <div className="flex flex-grow flex-wrap">
                                         <img
-                                            className="content__song__thumbnail"
+                                            className=" w-10 h-10 object-contain"
                                             src={currentSongPlaying?.image}
                                             alt={currentSongPlaying?.song}
                                         />
-                                        &nbsp;&nbsp;
                                         <Loader
-                                            className={`content__currentSongTitle__audioLoader ${!play && pause ? `hide` : ``
+                                            className={` align-middle px-1 py-1 ${!play && pause ? `hide` : ``
                                                 }`}
                                             type="Audio"
                                             color="#ff5858"
                                             height={20}
                                             width={20}
                                         />
-                                    </div>
-                                ) : (
-                                    ""
-                                )}
-                                {!play && pause ? "" : "  "}
-                                <div className="flex-column text-justify">
-                                    <div title={currentSongPlaying?.song} className="text-sm flex-start">{truncate(currentSongPlaying?.song?.trim(), 80)}</div>
-                                    {(play || pause) &&
-                                        (currentSongPlaying !== undefined || currentSongPlaying !== "undefined") ? (
-                                        <div
-                                            title={
-                                                currentSongPlaying?.primary_artists +
-                                                "-" +
-                                                currentSongPlaying?.album
-                                            }
-                                            className="song__artist dim-white player__flex "
-                                        >
-                                            <div className="player__current__song__metadata text-gray-400">
-                                                {truncate(currentSongPlaying?.album, 40)}
+                                        {!play && pause && (<div>&nbsp;<PlayCircleFilledRoundedIcon size={4} className="text-xs align-middle mt-2" /></div>)}
+                                        <div className="flex-column space-x-0">
+                                            {currentSongPlaying?.song && (
+                                                <div title={parse(currentSongPlaying?.song)}
+                                                    className="align-middle px-1 py-1 text-sm lg:text-md flex">
+                                                    {truncate(parse(currentSongPlaying?.song), 50)}
+                                                </div>
+                                            )}
+                                            {(play || pause) &&
+                                                (currentSongPlaying !== undefined ||
+                                                    currentSongPlaying !== "undefined") && (
+                                                    <div
+                                                        title={
+                                                            currentSongPlaying?.primary_artists +
+                                                                "-" +
+                                                                currentSongPlaying?.album
+                                                                ? parse(currentSongPlaying?.album)
+                                                                : ""
+                                                        }
+                                                        className=""
+                                                    >
+                                                        {currentSongPlaying?.album && (
+                                                            <div className="align-middle ml-1 text-xs lg:text-md md:text-sm text-gray-400">
+                                                                {truncate(parse(currentSongPlaying?.album), 40)}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
+                                        </div>
+                                        {/* additional controls */}
+                                        <div className="flex flex-shrink font-light text-sm justify-center text-center ml-8 px-1 py-1 space-x-2">
+                                            <div className="text-xs px-1 py-1 cursor-pointer">
+                                                <ShareIcon size={4}
+                                                    onClick={(e) => toggleModal(e)}
+
+                                                />
+                                            </div>
+                                            <div className="-mt-1 text-xs px-1 py-2 cursor-pointer">
+                                                {!favorite && (
+                                                    <FavoriteBorderIcon size={4}
+                                                        onClick={(e) => toggleFavorites(e)}
+
+                                                    />
+                                                )}
+                                                {favorite && (
+                                                    <FavoriteIcon
+                                                        onClick={(e) => toggleFavorites(e)}
+                                                        size={4}
+
+                                                    />
+                                                )}
+                                            </div>
+                                            <div className=" text-xs px-1 py-1 cursor-pointer">
+                                                <MoreHorizIcon
+                                                    onClick={(e) => openMoreOptionsPopOver(e)}
+                                                    size={4}
+
+                                                />
+                                                <Popover
+                                                    id={id}
+                                                    open={open}
+                                                    anchorEl={anchorEl}
+                                                    onClose={closeMoreOptionsPopOver}
+                                                    anchorOrigin={{
+                                                        vertical: "bottom",
+                                                        horizontal: "right",
+                                                    }}
+                                                    transformOrigin={{
+                                                        vertical: "top",
+                                                        horizontal: "right",
+                                                    }}
+                                                >
+                                                    <PlayerMoreOptions
+                                                        openedFromPlaylist={false}
+                                                        onClosed={closeMoreOptionsPopOver}
+                                                    />
+                                                </Popover>
+                                            </div>
+                                            <div className="mt-2 px-1 py-1 ml-5">
+                                                <FormControlLabel
+                                                    control={
+                                                        <Switch
+                                                            checked={autoPlayAfterSrcChange}
+                                                            onChange={(e) => toggleAutoPlay(e)}
+                                                            name="checkedB"
+                                                            color="primary"
+                                                            size="small"
+                                                        />
+                                                    }
+                                                    label="A"
+                                                    className="text-xs"
+                                                    title="Toggle autoplay"
+                                                />
+                                            </div>
+
+                                            <div className=" mt-2 px-1 py-1 flex flex-grow ">
+                                                <GraphicEqIcon className="content__audio__quality__icon" />
+                                                <div className="content__audio__quality">
+                                                    <NativeSelect
+                                                        value={quality}
+                                                        onChange={(e) => setAudioQuality(e.target.value)}
+                                                        inputProps={{
+                                                            name: "quality",
+                                                            id: "audio-quality-helper",
+                                                        }}
+                                                    >
+                                                        <option defaultValue value={0}>
+                                                            Auto
+                                                        </option>
+                                                        <option value={1}>High</option>
+                                                        <option value={2}>Medium</option>
+                                                        <option value={3}>Low</option>
+                                                    </NativeSelect>
+                                                </div>
+
                                             </div>
                                         </div>
-                                    ) : (
-                                        ""
-                                    )}
-                                </div>
-
-                                <div>&nbsp;&nbsp;</div>
-                                <GraphicEqIcon className="content__audio__quality__icon" />
-
-                                <div className="content__audio__quality">
-                                    <NativeSelect
-                                        value={quality}
-                                        onChange={(e) => setAudioQuality(e.target.value)}
-                                        inputProps={{
-                                            name: "quality",
-                                            id: "audio-quality-helper",
-                                        }}
-                                    >
-                                        <option defaultValue value={0}>
-                                            Auto
-                                        </option>
-                                        <option value={1}>High</option>
-                                        <option value={2}>Medium</option>
-                                        <option value={3}>Low</option>
-                                    </NativeSelect>
-                                </div>
-                                <ShareIcon onClick={(e) => toggleModal(e)} className="share-icon off" />
-                                <div className="">
-
-                                    <FormControlLabel
-                                        control={
-                                            <Switch
-                                                checked={autoPlayAfterSrcChange}
-                                                onChange={(e) => toggleAutoPlay(e)}
-                                                name="checkedB"
-                                                color="primary"
-                                                size="small"
-                                            />
-                                        }
-                                        label="A"
-                                        className="text-xs"
-                                        title="Toggle autoplay"
-                                    />
-                                </div>
-                                <MoreHorizIcon
-                                    onClick={(e) => openMoreOptionsPopOver(e)}
-                                    className="share-icon off"
-                                />
-                                <Popover
-                                    id={id}
-                                    open={open}
-                                    anchorEl={anchorEl}
-                                    onClose={closeMoreOptionsPopOver}
-                                    anchorOrigin={{
-                                        vertical: "bottom",
-                                        horizontal: "right",
-                                    }}
-                                    transformOrigin={{
-                                        vertical: "top",
-                                        horizontal: "right",
-                                    }}
-                                >
-                                    <PlayerMoreOptions openedFromPlaylist={false} onClosed={closeMoreOptionsPopOver} />
-                                </Popover>
-                            </div>
-
-
+                                    </div>
+                                )}
                         </div>
-                    }
-                />
+                    } />
             </footer>
         </div>
-    )
+    );
 }
 
-export default PlayerLite
+export default PlayerLite;
