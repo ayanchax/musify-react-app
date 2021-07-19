@@ -2,12 +2,6 @@ form>button {
     display: none;
 }
 
-.suggestBox {
-    background-image: linear-gradient(to right, #111, #3b3b8a);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif!important;
-    color: white!important;
-}
-
 .search {
     color: #fff;
     justify-content: center;

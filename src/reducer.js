@@ -1,7 +1,10 @@
 export const initialState = {
     user: null,
     featuredPlaylist: [],
+    boilerPlateData: [],
     currentSongPlaying: {},
+    play: false,
+    pause: false,
     selectedSongNeedle: {},
 
     //remove after finished developing
@@ -9,9 +12,12 @@ export const initialState = {
 };
 export const actionTypes = {
     SET_USER: "SET_USER",
+    SET_BOILER_PLATE_DATA: "SET_BOILER_PLATE_DATA",
     SET_FEATURED_PLAYLISTS: "SET_FEATURED_PLAYLISTS",
     SET_CURRENT_SONG: "SET_CURRENT_SONG",
     SET_SELECTED_SONG_NEEDLE: "SET_SELECTED_SONG_NEEDLE",
+    SET_PLAYING: "SET_PLAYING",
+    SET_PAUSED: "SET_PAUSED",
 };
 // Reducer Job: receive actions from the user and perform the actions and push the action data
 // into the state(initialState) for the data layer to consume
@@ -33,6 +39,11 @@ const reducer = (state, action) => {
                 ...state,
                 featuredPlaylist: action.featuredPlaylist,
             };
+        case "SET_BOILER_PLATE_DATA":
+            return {
+                ...state,
+                boilerPlateData: action.boilerPlateData,
+            };
         case "SET_CURRENT_SONG":
             return {
                 ...state,
@@ -42,6 +53,17 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 selectedSongNeedle: action.selectedSongNeedle,
+            };
+
+        case "SET_PLAYING":
+            return {
+                ...state,
+                play: action.play,
+            };
+        case "SET_PAUSED":
+            return {
+                ...state,
+                pause: action.pause,
             };
 
         default:

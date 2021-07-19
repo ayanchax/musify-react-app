@@ -34,7 +34,14 @@ const GenericDialog = ({ dialogIcon, header, bodyComponent, footer, additionalDa
                     aria-labelledby="alert-dialog-slide-title"
                     aria-describedby="alert-dialog-slide-description"
                 >
-                    <DialogTitle id="alert-dialog-slide-title"><div className="genericdialog__title">{dialogIcon !== undefined ? dialogIcon : ""}<span className="genericdialog__headerTitle" >{header}</span></div></DialogTitle>
+                    <DialogTitle id="alert-dialog-slide-title">
+
+                        <div className="flex text-justify">
+                            <div className="text-2xl">
+                                {dialogIcon !== undefined ? dialogIcon : ""} {header}
+                            </div>
+                        </div>
+                    </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-slide-description">
                             <div className="genericdialog__share__container">
@@ -45,12 +52,17 @@ const GenericDialog = ({ dialogIcon, header, bodyComponent, footer, additionalDa
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <Button className="genericdialog__button" onClick={updateModalState} color="primary">
-                            Close
-                        </Button>
+
 
                     </DialogActions>
                     <Footer footer={footer} />
+
+
+                    <div className="flex justify-center text-xs text-gray-400">
+                        <Button className="" onClick={updateModalState} color="white">
+                            Close
+                        </Button>
+                    </div>
                 </Dialog>
             </div>
         )

@@ -76,6 +76,10 @@ function PlayerMoreOptions({ openedFromPlaylist, onClosed }) {
             <li className="player__moreOptionsList" role="presentation">
                 Copy Song Link
             </li>
+            <hr className="player__horizontalBar" />
+            <li className="player__moreOptionsList" role="presentation">
+                Show Lyrics
+            </li>
         </div>
     );
 }
