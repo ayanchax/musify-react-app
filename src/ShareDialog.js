@@ -22,6 +22,7 @@ import {
     FacebookMessengerShareButton,
 } from "react-share";
 import Footer from "./Footer";
+import HelmetMetaData from "./HelmetMetaData";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -76,6 +77,8 @@ const ShareDialog = ({
                             </div>
 
                             <div className="dialog__share__container">
+                                <HelmetMetaData url={url} quote={contentTitle} title={`Musify- ${contentTitle}`} image={content?.image}
+                                    description="Enjoy ad free music on Musify."></HelmetMetaData>
                                 {networks.map((network) => (
                                     <div key={network}>
                                         {network === "facebook" && (
@@ -84,9 +87,11 @@ const ShareDialog = ({
                                                 quote={contentTitle}
                                                 hashtag="#musify"
                                                 className="dialog__some-network__share-button"
+
                                             >
                                                 <FacebookIcon size={32} round />
                                             </FacebookShareButton>
+
                                         )}
                                         {network === "messenger" && (
                                             <FacebookMessengerShareButton

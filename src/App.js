@@ -14,6 +14,7 @@ import RegionalContent from "./RegionalContent";
 import ArtistContent from "./ArtistContent";
 import BandContent from "./BandContent";
 import PlayerLite from "./PlayerLite";
+import HelmetMetaData from "./HelmetMetaData";
 function App() {
   const [searchSuggestionWindowOpened, setSearchSuggestionWindowOpened] =
     useState(false);
@@ -24,7 +25,7 @@ function App() {
   const [_user, setUser] = useState(null);
   const initiateMediaObject = (_mediaObject) => {
     setMediaObject(_mediaObject);
-  }
+  };
 
   useEffect(() => {
     //backend listener
@@ -51,6 +52,7 @@ function App() {
   };
   return (
     <div>
+      <HelmetMetaData />
       {!_user ? (
         <Login />
       ) : (
@@ -65,7 +67,9 @@ function App() {
           <Router>
             <Switch>
               <Route path="/playlist/:playlistid">
-                <PlaylistContent media={initiateMediaObject} pauseRequested={setMediaPaused}
+                <PlaylistContent
+                  media={initiateMediaObject}
+                  pauseRequested={setMediaPaused}
                   fetchUrl={"playlist?pid="}
                   isIndian
                   setSearchSuggestionWindowOpened={
@@ -106,10 +110,11 @@ function App() {
               </Route>
             </Switch>
           </Router>
-          <PlayerLite setSearchSuggestionWindowOpened={
-            setSearchSuggestionWindowOpened
-          } media={mediaObject} isMediaPaused={mediaPaused} />
-
+          <PlayerLite
+            setSearchSuggestionWindowOpened={setSearchSuggestionWindowOpened}
+            media={mediaObject}
+            isMediaPaused={mediaPaused}
+          />
         </div>
       )}
     </div>
