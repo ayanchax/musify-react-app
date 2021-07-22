@@ -16,6 +16,7 @@ import BandContent from "./BandContent";
 import PlayerLite from "./PlayerLite";
 import HelmetMetaData from "./HelmetMetaData";
 function App() {
+  const maint_mode = true; // true means app is off/down or in maintainence mode
   const [searchSuggestionWindowOpened, setSearchSuggestionWindowOpened] =
     useState(false);
 
@@ -50,75 +51,85 @@ function App() {
   const toggleSearchSuggestionWindow = (bool) => {
     setSearchSuggestionWindowOpened(bool);
   };
-  return (
-    <div>
-      <HelmetMetaData />
-      {!_user ? (
-        <Login />
-      ) : (
-        <div className="app">
-          <Header />
-          <Search
-            isSuggestionOpened={searchSuggestionWindowOpened}
-            toggleSearchSuggestionWindow={toggleSearchSuggestionWindow}
-          />
-          <HeaderActions />
 
-          <Router>
-            <Switch>
-              <Route path="/playlist/:playlistid">
-                <PlaylistContent
-                  media={initiateMediaObject}
-                  pauseRequested={setMediaPaused}
-                  fetchUrl={"playlist?pid="}
-                  isIndian
-                  setSearchSuggestionWindowOpened={
-                    setSearchSuggestionWindowOpened
-                  }
-                />
-              </Route>
-              <Route path="/artist/:artistid">
-                <ArtistContent
-                  isIndian
-                  setSearchSuggestionWindowOpened={
-                    setSearchSuggestionWindowOpened
-                  }
-                />
-              </Route>
-              <Route path="/regional/:regionid">
-                <RegionalContent
-                  setSearchSuggestionWindowOpened={
-                    setSearchSuggestionWindowOpened
-                  }
-                />
-              </Route>
-              <Route path="/band/:bandid">
-                <BandContent
-                  isIndian
-                  setSearchSuggestionWindowOpened={
-                    setSearchSuggestionWindowOpened
-                  }
-                />
-              </Route>
-              <Route path="/">
-                {" "}
-                <Landing
-                  setSearchSuggestionWindowOpened={
-                    setSearchSuggestionWindowOpened
-                  }
-                />
-              </Route>
-            </Switch>
-          </Router>
-          <PlayerLite
-            setSearchSuggestionWindowOpened={setSearchSuggestionWindowOpened}
-            media={mediaObject}
-            isMediaPaused={mediaPaused}
-          />
-        </div>
-      )}
-    </div>
-  );
+  if (maint_mode) {
+    return (<div className="text-gray-200 justify-center text-center">Site is in maintainence mode.</div>)
+  }
+  else {
+
+    return (
+
+      <div>
+
+        <HelmetMetaData />
+        {!_user ? (
+          <Login />
+        ) : (
+          <div className="app">
+            <Header />
+            <Search
+              isSuggestionOpened={searchSuggestionWindowOpened}
+              toggleSearchSuggestionWindow={toggleSearchSuggestionWindow}
+            />
+            <HeaderActions />
+
+            <Router>
+              <Switch>
+                <Route path="/playlist/:playlistid">
+                  <PlaylistContent
+                    media={initiateMediaObject}
+                    pauseRequested={setMediaPaused}
+                    fetchUrl={"playlist?pid="}
+                    isIndian
+                    setSearchSuggestionWindowOpened={
+                      setSearchSuggestionWindowOpened
+                    }
+                  />
+                </Route>
+                <Route path="/artist/:artistid">
+                  <ArtistContent
+                    isIndian
+                    setSearchSuggestionWindowOpened={
+                      setSearchSuggestionWindowOpened
+                    }
+                  />
+                </Route>
+                <Route path="/regional/:regionid">
+                  <RegionalContent
+                    setSearchSuggestionWindowOpened={
+                      setSearchSuggestionWindowOpened
+                    }
+                  />
+                </Route>
+                <Route path="/band/:bandid">
+                  <BandContent
+                    isIndian
+                    setSearchSuggestionWindowOpened={
+                      setSearchSuggestionWindowOpened
+                    }
+                  />
+                </Route>
+                <Route path="/">
+                  {" "}
+                  <Landing
+                    setSearchSuggestionWindowOpened={
+                      setSearchSuggestionWindowOpened
+                    }
+                  />
+                </Route>
+              </Switch>
+            </Router>
+            <PlayerLite
+              setSearchSuggestionWindowOpened={setSearchSuggestionWindowOpened}
+              media={mediaObject}
+              isMediaPaused={mediaPaused}
+            />
+          </div>
+        )}
+      </div>
+    );
+  }
 }
+
 
 export default App;
