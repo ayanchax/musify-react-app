@@ -53,14 +53,15 @@ function App() {
   };
 
   if (maint_mode) {
-    return (<div className="text-gray-200 justify-center text-center">Site is in maintainence mode.</div>)
-  }
-  else {
-
     return (
-
+      <div className="text-gray-200 justify-center text-center">
+        <HelmetMetaData title="Musify - Maintainence Mode" />
+        Site is in maintainence mode.
+      </div>
+    );
+  } else {
+    return (
       <div>
-
         <HelmetMetaData />
         {!_user ? (
           <Login />
@@ -130,6 +131,5 @@ function App() {
     );
   }
 }
-
 
 export default App;
