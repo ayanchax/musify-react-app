@@ -3,7 +3,7 @@ import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 import AudioPlayer, { RHAP_UI } from "react-h5-audio-player";
 import "react-h5-audio-player/lib/styles.css";
 import "./Player.css";
-import PlayCircleFilledRoundedIcon from '@material-ui/icons/PlayCircleFilledRounded';
+import PlayCircleFilledRoundedIcon from "@material-ui/icons/PlayCircleFilledRounded";
 import Loader from "react-loader-spinner";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import { useDataLayerContextValue } from "./DataLayer";
@@ -22,6 +22,7 @@ import ShareDialog from "./ShareDialog";
 import Switch from "@material-ui/core/Switch";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import parse from "html-react-parser";
+import HelmetMetaData from "./HelmetMetaData";
 toast.configure();
 function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
     const playerObject = useRef(null);
@@ -38,6 +39,7 @@ function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
     const open = Boolean(anchorEl);
     const id = open ? "simple-popover" : undefined;
     useEffect(() => {
+        console.log(media)
         if (isMediaPaused) {
             //pause requested
             playerObject.current.audio.current.pause();
@@ -95,7 +97,7 @@ function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
             type: actionTypes.SET_PAUSED,
             pause: false,
         });
-        document.title = "Musify | " + media?.song;
+        document.title = "Musify | " + media?.title;
     };
     const pauseMedia = (e) => {
         console.log("Paused");
@@ -111,7 +113,7 @@ function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
             type: actionTypes.SET_PAUSED,
             pause: true,
         });
-        document.title = "Musify | " + media?.song;
+        document.title = "Musify | " + media?.title;
     };
     const onPlayError = (e) => {
         console.log("Play error");
@@ -151,17 +153,14 @@ function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
     }
 
     const toggleAutoPlay = (e) => {
-        if (autoPlayAfterSrcChange)
-            setAutoPlayAfterSrcChange(false)
-        else setAutoPlayAfterSrcChange(true)
+        if (autoPlayAfterSrcChange) setAutoPlayAfterSrcChange(false);
+        else setAutoPlayAfterSrcChange(true);
         if (!autoPlayAfterSrcChange) {
             toast.success("Auto play turned on!!", {
                 position: toast.POSITION.BOTTOM_CENTER,
                 autoClose: 3000,
             });
-        }
-        else {
-
+        } else {
             toast.dark("Auto play turned off!!", {
                 position: toast.POSITION.BOTTOM_CENTER,
                 autoClose: 3000,
@@ -176,16 +175,17 @@ function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
                     "https://musify-7ba7c.web.app/song/" +
                     currentSongPlaying?.id +
                     "/" +
-                    currentSongPlaying?.song
+                    currentSongPlaying?.title
                 }
                 networks={["facebook", "messenger", "whatsapp", "linkedin", "twitter"]}
                 title="Share Musify!!"
                 songThumbnail={currentSongPlaying?.image}
-                contentTitle={truncate(currentSongPlaying?.song, 100)}
+                contentTitle={truncate(currentSongPlaying?.title, 100)}
                 content={currentSongPlaying}
                 isOpen={showModal}
                 updateModalState={toggleModal}
             />
+
             <footer
                 onClick={(e) => setSearchSuggestionWindowOpened(false)}
                 className={`player  ${!play && !pause ? `translucent` : ``}`}
@@ -195,9 +195,8 @@ function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
                     hasDefaultKeyBindings={true}
                     autoPlayAfterSrcChange={autoPlayAfterSrcChange}
                     autoPlay={false}
-                    src={media?.media_url}
+                    src={media?.more_info?.decrypted_media_url}
                     volume={0.5}
-
                     showSkipControls={true}
                     onClickPrevious={(e) => console.log()}
                     onClickNext={(e) => console.log()}
@@ -215,10 +214,7 @@ function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
                     onSuspend={(e) => console.log("Suspended")}
                     onWaiting={(e) => console.log("Waiting")}
                     onVolumeChange={(e) => console.log("Volume Changed")}
-
-                    customAdditionalControls={[
-                        RHAP_UI.LOOP
-                    ]}
+                    customAdditionalControls={[RHAP_UI.LOOP]}
                     header={
                         <div>
                             {(play || pause) &&
@@ -228,7 +224,7 @@ function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
                                         <img
                                             className=" w-10 h-10 object-contain"
                                             src={currentSongPlaying?.image}
-                                            alt={currentSongPlaying?.song}
+                                            alt={currentSongPlaying?.title}
                                         />
                                         <Loader
                                             className={` align-middle px-1 py-1 ${!play && pause ? `hide` : ``
@@ -238,12 +234,22 @@ function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
                                             height={20}
                                             width={20}
                                         />
-                                        {!play && pause && (<div>&nbsp;<PlayCircleFilledRoundedIcon size={4} className="text-xs align-middle mt-2" /></div>)}
+                                        {!play && pause && (
+                                            <div>
+                                                &nbsp;
+                                                <PlayCircleFilledRoundedIcon
+                                                    size={4}
+                                                    className="text-xs align-middle mt-2"
+                                                />
+                                            </div>
+                                        )}
                                         <div className="flex-column space-x-0">
-                                            {currentSongPlaying?.song && (
-                                                <div title={parse(currentSongPlaying?.song)}
-                                                    className="align-middle px-1 py-1 text-sm lg:text-md flex">
-                                                    {truncate(parse(currentSongPlaying?.song), 50)}
+                                            {currentSongPlaying?.title && (
+                                                <div
+                                                    title={parse(currentSongPlaying?.title)}
+                                                    className="align-middle px-1 py-1 text-sm lg:text-md flex"
+                                                >
+                                                    {truncate(parse(currentSongPlaying?.title), 50)}
                                                 </div>
                                             )}
                                             {(play || pause) &&
@@ -251,17 +257,18 @@ function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
                                                     currentSongPlaying !== "undefined") && (
                                                     <div
                                                         title={
-                                                            currentSongPlaying?.primary_artists +
-                                                                "-" +
-                                                                currentSongPlaying?.album
-                                                                ? parse(currentSongPlaying?.album)
+                                                            currentSongPlaying?.subtitle
+                                                                ? parse(currentSongPlaying?.subtitle)
                                                                 : ""
                                                         }
                                                         className=""
                                                     >
-                                                        {currentSongPlaying?.album && (
+                                                        {currentSongPlaying?.title && (
                                                             <div className="align-middle ml-1 text-xs lg:text-md md:text-sm text-gray-400">
-                                                                {truncate(parse(currentSongPlaying?.album), 40)}
+                                                                {truncate(
+                                                                    parse(currentSongPlaying?.subtitle),
+                                                                    40
+                                                                )}
                                                             </div>
                                                         )}
                                                     </div>
@@ -270,23 +277,19 @@ function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
                                         {/* additional controls */}
                                         <div className="flex flex-shrink font-light text-sm justify-center text-center ml-8 px-1 py-1 space-x-2">
                                             <div className="text-xs px-1 py-1 cursor-pointer">
-                                                <ShareIcon size={4}
-                                                    onClick={(e) => toggleModal(e)}
-
-                                                />
+                                                <ShareIcon size={4} onClick={(e) => toggleModal(e)} />
                                             </div>
                                             <div className="-mt-1 text-xs px-1 py-2 cursor-pointer">
                                                 {!favorite && (
-                                                    <FavoriteBorderIcon size={4}
+                                                    <FavoriteBorderIcon
+                                                        size={4}
                                                         onClick={(e) => toggleFavorites(e)}
-
                                                     />
                                                 )}
                                                 {favorite && (
                                                     <FavoriteIcon
                                                         onClick={(e) => toggleFavorites(e)}
                                                         size={4}
-
                                                     />
                                                 )}
                                             </div>
@@ -294,7 +297,6 @@ function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
                                                 <MoreHorizIcon
                                                     onClick={(e) => openMoreOptionsPopOver(e)}
                                                     size={4}
-
                                                 />
                                                 <Popover
                                                     id={id}
@@ -352,13 +354,13 @@ function PlayerLite({ setSearchSuggestionWindowOpened, media, isMediaPaused }) {
                                                         <option value={3}>Low</option>
                                                     </NativeSelect>
                                                 </div>
-
                                             </div>
                                         </div>
                                     </div>
                                 )}
                         </div>
-                    } />
+                    }
+                />
             </footer>
         </div>
     );

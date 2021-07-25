@@ -5,7 +5,6 @@ import SearchIcon from "@material-ui/icons/Search";
 import TextField from "@material-ui/core/TextField";
 import AutoSuggest from "./AutoSuggest";
 
-
 function Search({ isSuggestionOpened, toggleSearchSuggestionWindow }) {
     const [songSuggestions, setSongSuggestions] = useState([]);
     const [playlistsSuggestions, setPlaylistsSuggestions] = useState([]);
@@ -47,17 +46,17 @@ function Search({ isSuggestionOpened, toggleSearchSuggestionWindow }) {
         await axios
             .get("search?query=" + searchText)
             .then((response) => {
-                setSongSuggestions(response.data[0]?.songs);
-                setPlaylistsSuggestions(response.data[0]?.playlists);
-                setAlbumsSuggestion(response.data[0]?.albums);
-                setTopArtistsSuggestions(response.data[0].artists);
+
+                setSongSuggestions(response.data?.songs);
+                setPlaylistsSuggestions(response.data?.playlists);
+                setAlbumsSuggestion(response.data?.albums);
+                setTopArtistsSuggestions(response.data.artists);
                 toggleSearchSuggestionWindow(true);
             })
             .catch((error) => {
                 toggleSearchSuggestionWindow(false);
                 console.error("Failed!", error);
-            })
-
+            });
     };
 
     return (
@@ -75,11 +74,16 @@ function Search({ isSuggestionOpened, toggleSearchSuggestionWindow }) {
                 />
                 <button type="submit">Send Message</button>
             </form>
-            {isSuggestionOpened && (<AutoSuggest songSuggestions={songSuggestions} playlistsSuggestions={playlistsSuggestions} albumsSuggestion={albumsSuggestion}
-                topArtistsSuggestions={topArtistsSuggestions} />)}
+            {isSuggestionOpened && (
+                <AutoSuggest
+                    songSuggestions={songSuggestions}
+                    playlistsSuggestions={playlistsSuggestions}
+                    albumsSuggestion={albumsSuggestion}
+                    topArtistsSuggestions={topArtistsSuggestions}
+                />
+            )}
         </div>
     );
 }
 
 export default Search;
-

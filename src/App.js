@@ -15,8 +15,9 @@ import ArtistContent from "./ArtistContent";
 import BandContent from "./BandContent";
 import PlayerLite from "./PlayerLite";
 import HelmetMetaData from "./HelmetMetaData";
+import SongContent from "./SongContent";
 function App() {
-  const maint_mode = true; // true means app is off/down or in maintainence mode
+  const maint_mode = false; // true means app is off/down or in maintainence mode
   const [searchSuggestionWindowOpened, setSearchSuggestionWindowOpened] =
     useState(false);
 
@@ -48,6 +49,9 @@ function App() {
       }
     });
   }, [_user]);
+
+
+
   const toggleSearchSuggestionWindow = (bool) => {
     setSearchSuggestionWindowOpened(bool);
   };
@@ -68,20 +72,31 @@ function App() {
         ) : (
           <div className="app">
             <Header />
-            <Search
-              isSuggestionOpened={searchSuggestionWindowOpened}
-              toggleSearchSuggestionWindow={toggleSearchSuggestionWindow}
-            />
-            <HeaderActions />
+
 
             <Router>
+              <Search
+                isSuggestionOpened={searchSuggestionWindowOpened}
+                toggleSearchSuggestionWindow={toggleSearchSuggestionWindow}
+              />
+              <HeaderActions />
               <Switch>
                 <Route path="/playlist/:playlistid">
                   <PlaylistContent
                     media={initiateMediaObject}
                     pauseRequested={setMediaPaused}
                     fetchUrl={"playlist?pid="}
-                    isIndian
+
+                    setSearchSuggestionWindowOpened={
+                      setSearchSuggestionWindowOpened
+                    }
+                  />
+                </Route>
+                <Route path="/song/:songid/:songtitle">
+                  <SongContent
+                    media={initiateMediaObject}
+                    pauseRequested={setMediaPaused}
+                    fetchUrl={"song?songid="}
                     setSearchSuggestionWindowOpened={
                       setSearchSuggestionWindowOpened
                     }

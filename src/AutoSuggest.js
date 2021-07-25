@@ -1,7 +1,10 @@
+/* eslint-disable jsx-a11y/alt-text */
 import React from 'react'
 import { truncate, noImage, capitalizeFirstLetter } from "./utility";
 import "./AutoSuggest.css";
+import parse from "html-react-parser"
 
+import { Link } from "react-router-dom";
 function AutoSuggest({ songSuggestions, playlistsSuggestions, albumsSuggestion, topArtistsSuggestions }) {
 
     return (
@@ -18,19 +21,18 @@ function AutoSuggest({ songSuggestions, playlistsSuggestions, albumsSuggestion, 
                 {/* SONGS RESULTS */}
                 <div className=" suggestBox__songs grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                     {songSuggestions?.map((songSuggestion, index) => (
-                        <div
+                        <Link to={`/song/${songSuggestion?.id}/${parse(songSuggestion?.title)}`} key={songSuggestion?.id}
                             title={songSuggestion?.title}
                             className="px-2 py-1 font-sans  flex flex-grow cursor-pointer group 
-                          hover:bg-blue-600 "
-                            key={songSuggestion?.id}
+                          hover:bg-blue-600"
                         >
                             <div>
                                 <img
-                                    alt={songSuggestion?.title}
+
                                     src={songSuggestion?.image === "(unknown)" ? noImage : songSuggestion?.image}
 
                                     className="
-                transition duration-450 transform hover:scale-110 object-contain rounded-full w-12 h-12"
+                transition duration-450 transform hover:scale-110 object-contain  w-12 h-12"
                                 />
                             </div>
 
@@ -44,12 +46,11 @@ function AutoSuggest({ songSuggestions, playlistsSuggestions, albumsSuggestion, 
                                 </div>
 
                                 <div className="text-gray-400 lg:text-sm md:text-sm text-xs group-hover:text-gray-200">
-                                    {truncate(songSuggestion?.album, 20)} |{" "}
-                                    {capitalizeFirstLetter(songSuggestion.more_info.language)} |{" "}
-                                    {songSuggestion.songDetail?.year}
+                                    {truncate(parse(songSuggestion?.more_info?.album, 20))} |{" "}
+                                    {capitalizeFirstLetter(songSuggestion?.more_info?.language)}
                                 </div>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
                 {/* PLAYLIST RESULTS */}
@@ -71,11 +72,10 @@ function AutoSuggest({ songSuggestions, playlistsSuggestions, albumsSuggestion, 
                         >
                             <div>
                                 <img
-                                    alt={playlistSuggestion?.title}
 
                                     src={playlistSuggestion?.image === "(unknown)" ? noImage : playlistSuggestion?.image}
                                     className="
-                transition duration-450 transform hover:scale-110 object-contain rounded-full w-12 h-12"
+                transition duration-450 transform hover:scale-110 object-contain  w-12 h-12"
                                 />
                             </div>
 
@@ -88,8 +88,14 @@ function AutoSuggest({ songSuggestions, playlistsSuggestions, albumsSuggestion, 
                                     {truncate(playlistSuggestion?.title, 20)}
                                 </div>
                                 <div className="text-gray-400 lg:text-sm md:text-sm text-xs group-hover:text-gray-200">
-                                    {capitalizeFirstLetter(playlistSuggestion.language)} | {" "}{playlistSuggestion.songs.length} songs
+                                    {capitalizeFirstLetter(playlistSuggestion?.language)}
                                 </div>
+                                {playlistSuggestion?.more_info?.artist_name && (
+                                    <div className="text-gray-400 lg:text-sm md:text-sm text-xs group-hover:text-gray-200">
+                                        {truncate(playlistSuggestion?.more_info?.artist_name[0], 40)}
+
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))}
@@ -113,11 +119,10 @@ function AutoSuggest({ songSuggestions, playlistsSuggestions, albumsSuggestion, 
                         >
                             <div>
                                 <img
-                                    alt={albumSuggestion?.title}
 
                                     src={albumSuggestion?.image === "(unknown)" ? noImage : albumSuggestion?.image}
                                     className="
-                transition duration-450 transform hover:scale-110 object-contain rounded-full w-12 h-12"
+                transition duration-450 transform hover:scale-110 object-contain  w-12 h-12"
                                 />
                             </div>
 
@@ -130,7 +135,7 @@ function AutoSuggest({ songSuggestions, playlistsSuggestions, albumsSuggestion, 
                                     {truncate(albumSuggestion?.title, 20)}
                                 </div>
                                 <div className="text-gray-400 lg:text-sm md:text-sm text-xs group-hover:text-gray-200">
-                                    {truncate(albumSuggestion?.music, 40)} |{" "}
+                                    {truncate(albumSuggestion?.more_info?.music, 40)} |{" "}
                                     {capitalizeFirstLetter(albumSuggestion?.more_info.language)} | {" "}
                                     {albumSuggestion?.more_info.year}
                                 </div>
@@ -150,32 +155,30 @@ function AutoSuggest({ songSuggestions, playlistsSuggestions, albumsSuggestion, 
                 <div className=" suggestBox__albums font-sans  grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                     {topArtistsSuggestions?.map((topArtist, index) => (
                         <div
-                            title={topArtist?.name}
+                            title={topArtist?.title}
                             className="px-2 py-1 font-sans  flex flex-grow cursor-pointer group   hover:bg-blue-600 "
-                            key={topArtist?.index}
+                            key={topArtist?.id}
                         >
                             <div>
                                 <img
-                                    alt={topArtist?.name}
+
 
                                     src={topArtist?.image}
                                     className="
-                transition duration-450 transform hover:scale-110 object-contain rounded-full w-12 h-12"
+                transition duration-450 transform hover:scale-110 object-contain  w-12 h-12"
                                 />
                             </div>
 
-                            <div className="flex-column group-hover:text-white  font-sans mt-2 ml-3 lg:ml-2 lg:mt-0 md:mt-0 md:ml-2">
+                            <div className="flex-column group-hover:text-white  font-sans mt-2 ml-3 lg:ml-2 lg:mt-2 md:mt-0 md:ml-2">
                                 <div
                                     className="searchresult__title align-middle overflow-ellipsis antialiased 
                             sm:subpixel-antialiased md:antialiased font-semibold group-hover:text-white
                          "
                                 >
-                                    {truncate(topArtist?.name, 30)}
+                                    {truncate(topArtist?.title, 30)}
                                 </div>
 
-                                <div className="text-gray-400 lg:text-sm md:text-sm text-xs group-hover:text-gray-200">
-                                    {topArtist?.type}{" "}
-                                </div>
+
                             </div>
                         </div>
                     ))}

@@ -13,7 +13,11 @@ export const randomKeyWord = (keyword) => {
     return keyword[Math.floor(Math.random() * keyword.length)];
 };
 export const capitalizeFirstLetter = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
+    try {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    } catch (error) {
+        return string;
+    }
 };
 
 export const duration = (value) => {

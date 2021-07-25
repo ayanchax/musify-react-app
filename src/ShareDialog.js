@@ -8,7 +8,7 @@ import Slide from "@material-ui/core/Slide";
 import Button from "@material-ui/core/Button";
 import ShareIcon from "@material-ui/icons/Share";
 import "./ShareDialog.css";
-import parse from "html-react-parser"
+import parse from "html-react-parser";
 import {
     FacebookShareButton,
     FacebookIcon,
@@ -22,7 +22,7 @@ import {
     FacebookMessengerShareButton,
 } from "react-share";
 import Footer from "./Footer";
-import HelmetMetaData from "./HelmetMetaData";
+
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -71,14 +71,13 @@ const ShareDialog = ({
                                     {parse(contentTitle)}
                                 </div>
                                 <div className="text-gray-400 text-sm font-sans">
-                                    {content?.primary_artists ? content?.primary_artists : "NA"} |{" "}
-                                    {parse(content?.album)} | {content?.year}
+                                    {content?.more_info?.primary_artists_label ? content?.more_info?.primary_artists_label : content?.subtitle} |{" "}
+                                    {parse(content?.more_info?.album)} | {content?.year}
                                 </div>
                             </div>
 
                             <div className="dialog__share__container">
-                                <HelmetMetaData url={url} quote={contentTitle} title={`Musify- ${contentTitle}`} image={content?.image}
-                                    description="Enjoy ad free music on Musify."></HelmetMetaData>
+
                                 {networks.map((network) => (
                                     <div key={network}>
                                         {network === "facebook" && (
@@ -87,11 +86,9 @@ const ShareDialog = ({
                                                 quote={contentTitle}
                                                 hashtag="#musify"
                                                 className="dialog__some-network__share-button"
-
                                             >
                                                 <FacebookIcon size={32} round />
                                             </FacebookShareButton>
-
                                         )}
                                         {network === "messenger" && (
                                             <FacebookMessengerShareButton

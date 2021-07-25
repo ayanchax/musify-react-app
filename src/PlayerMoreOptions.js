@@ -97,7 +97,7 @@ function PlayerMoreOptions({ openedFromPlaylist, onClosed }) {
             </li>
             <hr className="player__horizontalBar" />
             <li className="player__moreOptionsList" role="presentation">
-                <CopyToClipboard text={openedFromPlaylist ? "https://musify-7ba7c.web.app/song/" + selectedSongNeedle?.id + "/" + selectedSongNeedle?.song : "https://musify-7ba7c.web.app/song/" + currentSongPlaying?.id + "/" + currentSongPlaying?.song}
+                <CopyToClipboard text={openedFromPlaylist ? "https://musify-7ba7c.web.app/song/" + selectedSongNeedle?.id + "/" + selectedSongNeedle?.title : "https://musify-7ba7c.web.app/song/" + currentSongPlaying?.id + "/" + currentSongPlaying?.title}
                     onCopy={() => setCopiedSongLink(true)}>
                     <span>Copy Song Link</span>
                 </CopyToClipboard>
